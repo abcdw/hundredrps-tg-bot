@@ -1,0 +1,6 @@
+# -*- mode: org; -*-
+#+OPTIONS: toc:nil
+
+- [[https://github.com/metosin/muuntaja][metosin/muuntaja]] :: encoding/decoding http requests.
+- [[https://github.com/metosin/jsonista][metosin/jsonista]] :: fast json encoding/decoding lib.
+- [[https://github.com/metosin/reitit][metosin/reitit]] :: data-driven routing.
