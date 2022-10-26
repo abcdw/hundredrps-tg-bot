@@ -22,6 +22,8 @@
   [_ tag value]
   (ig/ref value))
 
+(defmethod ig/init-key :tg/token [_ val] val)
+
 (defmethod ig/init-key :http/server [_ {:keys [handler] :as opts}]
   (http-kit/run-server handler (-> opts
                                    (dissoc :handler)
@@ -30,11 +32,11 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
-(defmethod ig/init-key :handler/webhook [_ {:keys [name]}]
   (fn [_]
     {:status  200
      :headers {"Content-Type" "text/plain"}
      :body    (str "Huey " name)}))
+(defmethod ig/init-key :handler/webhook [_ {:keys [api-token]}]
 
 (defn get-config
   "Read integrant system description from config.edn."
