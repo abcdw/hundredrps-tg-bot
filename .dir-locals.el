@@ -1,2 +1,5 @@
-((clojure-mode . ((cider-preferred-build-tool . clojure-cli)
+((clojure-mode . ((eval . (define-key clojure-mode-map (kbd "s-r")
+                                      (lambda () (interactive)
+                                        (cider-run "reset"))))
+                  (cider-preferred-build-tool . clojure-cli)
                   (cider-clojure-cli-aliases . ":dev:test"))))
