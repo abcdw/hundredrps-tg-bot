@@ -37,19 +37,19 @@
 (defmethod ig/init-key :handler/webhook [_ {:keys [api-token]}]
   (fn [{:keys [body]}]
     (let [input (j/read-value body j/keyword-keys-object-mapper)
+
           {{{chat-id :id} :chat
             text          :text} :message} input
-          reply-msg '()]
 
-      (->
-       @(http/post
-         (str "https://api.telegram.org/bot" api-token "/sendMessage")
-         {:form-params {:chat_id chat-id
-                        :text    text}})
-       println)
+          echo-msg (j/write-value-as-string
+                    {:method  "sendMessage"
+                     :chat_id chat-id
+                     :text    text})]
+
       {:status  200
-       :headers {"Content-Type" "text/plain"}
-       :body    (str "Hey")})))
+       :headers {"Content-Type" "application/json"
+                 "Content-Length" (count echo-msg)}
+       :body    echo-msg})))
 
 (defn get-config
   "Read integrant system description from config.edn."
