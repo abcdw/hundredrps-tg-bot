@@ -2,6 +2,7 @@
   (:gen-class)
   (:require
    [org.httpkit.server :as http-kit]
+   [aero.core :as aero]
    [clojure.java.io :as io]
    [integrant.core :as ig]))
 
@@ -13,6 +14,13 @@
 (defn sum [a b]
   "Can be used for writing a simple test."
   (+ a b))
+
+
+
+
+(defmethod aero/reader 'ig/ref
+  [_ tag value]
+  (ig/ref value))
 
 (defmethod ig/init-key :http/server [_ {:keys [handler] :as opts}]
   (http-kit/run-server handler (-> opts
@@ -31,5 +39,4 @@
 (defn get-config
   "Read integrant system description from config.edn."
   []
-  ;; TODO: aero integration https://github.com/juxt/site-lambda-example
-  (ig/read-string (slurp (io/resource "config.edn"))))
+  (aero/read-config (io/resource "config.edn")))
