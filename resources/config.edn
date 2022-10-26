@@ -1,0 +1,4 @@
+{:http/server          {:port 8080 :handler #ig/ref :handler/webhook}
+ :handler/webhook      {}
+ ;; :telegram/credentials {}
+ }
