@@ -1,8 +1,13 @@
 (ns hundredrps.tg)
 
+(defn get-message
+  "Get message from update."
+  [upd]
+  (if (get upd :edited_message)
+    (get upd :edited_message)
+    (get upd :message)))
+
 (defn get-chat-id
-  "Finds a chat-id in both plain messages and edited messages."
-  [msg]
-  (if (get msg :edited_message)
-    (get-in msg [:edited_message :chat :id])
-    (get-in msg [:message :chat :id])))
+  "Extracts chat-id from update."
+  [upd]
+  (get-in (get-message upd) [:chat :id]))
