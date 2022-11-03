@@ -94,7 +94,9 @@
 (deftest get-photo-file-id
   (testing "Best photo id"
     (is (= "AgACAgIAAxkBAAMpY2Nc-yqDSJesQ2Rj30jpDbyeNxAAAgq-MRvgZ6BKY_u9_KME3CIBAAMCAAN4AAMqBA"
-             (sut/get-photo-file-id photo-message)))))
+             (sut/get-photo-file-id photo-message))))
+  (testing "Non-photo message"
+    (is (nil? (sut/get-photo-file-id usual-message)))))
 
 (deftest get-message-type
   (testing "Message type"
