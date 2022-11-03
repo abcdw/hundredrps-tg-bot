@@ -81,21 +81,17 @@
      :last_name     "Tropin"},
     :text       "hello"}})
 
-(deftest chat-id-extract
+(deftest get-chat-id
   (testing "Usual message"
-    (let [msg usual-message]
-      (is (= 67562087 (sut/get-chat-id msg)))))
+    (is (= 67562087 (sut/get-chat-id usual-message))))
 
   (testing "Photo message"
-    (let [msg photo-message]
-      (is (= 67562087 (sut/get-chat-id msg)))))
+    (is (= 67562087 (sut/get-chat-id photo-message))))
 
   (testing "Edited message"
-    (let [msg edited-message]
-      (is (= 67562087 (sut/get-chat-id msg))))))
+    (is (= 67562087 (sut/get-chat-id edited-message)))))
 
-(deftest photo-file-id-extract
+(deftest get-photo-file-id
   (testing "Best photo id"
-    (let [msg photo-message]
-      (is (= "AgACAgIAAxkBAAMpY2Nc-yqDSJesQ2Rj30jpDbyeNxAAAgq-MRvgZ6BKY_u9_KME3CIBAAMCAAN4AAMqBA"
-             (sut/get-photo-file-id msg))))))
+    (is (= "AgACAgIAAxkBAAMpY2Nc-yqDSJesQ2Rj30jpDbyeNxAAAgq-MRvgZ6BKY_u9_KME3CIBAAMCAAN4AAMqBA"
+             (sut/get-photo-file-id photo-message)))))
