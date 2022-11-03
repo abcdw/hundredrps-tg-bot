@@ -3,6 +3,7 @@
   (:require
    [aero.core :as aero]
    [clojure.java.io :as io]
+   [hundredrps.cards :as cards]
    [hundredrps.tg :as tg]
    [integrant.core :as ig]
    [jsonista.core :as j]
@@ -42,19 +43,18 @@
     (let [input (j/read-value body j/keyword-keys-object-mapper)
 
           chat-id (tg/get-chat-id input)
-          text    (:text (tg/get-message input))
 
-          echo-msg (j/write-value-as-string
-                    {:method  "sendMessage"
-                     :chat_id chat-id
-                     :text    text})]
+          {:keys [reply state]}
+          (cards/process-update (get-in @db [chat-id :state] {}) input)
 
-      (swap! db update-in [chat-id :updates] #(if % (conj % input) [input]))
+          _ (swap! db assoc-in [chat-id :state] state)
+
+          reply-body (j/write-value-as-string reply)]
 
       {:status  200
        :headers {"Content-Type"   "application/json"
-                 "Content-Length" (count echo-msg)}
-       :body    echo-msg})))
+                 "Content-Length" (count reply-body)}
+       :body    reply-body})))
 
 (defn get-config
   "Read integrant system description from config.edn."

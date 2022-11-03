@@ -8,6 +8,8 @@
         text         (or (:text (tg/get-message upd))
                          "No text in previous message.")
 
+        new-state (update state :updates #(if % (conj % upd) [upd]))
+
         reply (tg/send-text-message chat-id text)]
     {:reply reply
-     :state {}}))
+     :state new-state}))
