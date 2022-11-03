@@ -11,3 +11,8 @@
   "Extracts chat-id from update."
   [upd]
   (get-in (get-message upd) [:chat :id]))
+
+(defn get-photo-file-id
+  "Get file id of the photo with the best resolution."
+  [upd]
+  (-> upd get-message :photo last :file_id))
