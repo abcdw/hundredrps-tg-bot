@@ -31,6 +31,9 @@
   [upd]
   (-> upd get-message :message_id))
 
+
+;;; tg api
+
 (defn send-message
   "Return a send-message request body."
   [ctx]
