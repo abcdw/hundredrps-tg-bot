@@ -95,3 +95,10 @@
   (testing "Best photo id"
     (is (= "AgACAgIAAxkBAAMpY2Nc-yqDSJesQ2Rj30jpDbyeNxAAAgq-MRvgZ6BKY_u9_KME3CIBAAMCAAN4AAMqBA"
              (sut/get-photo-file-id photo-message)))))
+
+(deftest get-message-type
+  (testing "Message type"
+    (is (= :text (sut/get-message-type usual-message)))
+    (is (= :text (sut/get-message-type edited-message)))
+    (is (= :photo (sut/get-message-type photo-message)))
+    (is (= :unknown (sut/get-message-type {})))))

@@ -16,3 +16,12 @@
   "Get file id of the photo with the best resolution."
   [upd]
   (-> upd get-message :photo last :file_id))
+
+(defn get-message-type
+  "Get message type from update."
+  [upd]
+  (let [msg (-> upd get-message)]
+    (cond
+      (:text msg) :text
+      (:photo msg) :photo
+      :else :unknown)))
