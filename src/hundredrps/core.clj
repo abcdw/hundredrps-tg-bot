@@ -3,6 +3,7 @@
   (:require
    [aero.core :as aero]
    [clojure.java.io :as io]
+   [hundredrps.tg :as tg]
    [integrant.core :as ig]
    [jsonista.core :as j]
    [org.httpkit.client :as http]
@@ -40,16 +41,18 @@
   (fn [{:keys [body]}]
     (let [input (j/read-value body j/keyword-keys-object-mapper)
 
-          {{{chat-id :id} :chat
-            text          :text} :message} input
+          chat-id (tg/get-chat-id input)
+          text    (:text (tg/get-message input))
 
           echo-msg (j/write-value-as-string
                     {:method  "sendMessage"
                      :chat_id chat-id
                      :text    text})]
 
+      (swap! db update-in [chat-id :updates] #(if % (conj % input) [input]))
+
       {:status  200
-       :headers {"Content-Type" "application/json"
+       :headers {"Content-Type"   "application/json"
                  "Content-Length" (count echo-msg)}
        :body    echo-msg})))
 
