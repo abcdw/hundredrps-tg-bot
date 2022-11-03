@@ -26,6 +26,11 @@
       (:photo msg) :photo
       :else :unknown)))
 
+(defn get-message-id
+  "Get message id."
+  [upd]
+  (-> upd get-message :message_id))
+
 (defn send-message
   "Return a send-message request body."
   [ctx]
