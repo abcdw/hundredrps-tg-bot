@@ -25,3 +25,13 @@
       (:text msg) :text
       (:photo msg) :photo
       :else :unknown)))
+
+(defn send-message
+  "Return a send-message request body."
+  [ctx]
+  (merge ctx {:method "sendMessage"}))
+
+(defn send-text-message
+  "A convinience wrapper around `send-message`."
+  [chat-id text]
+  (send-message {:chat_id chat-id :text text}))
