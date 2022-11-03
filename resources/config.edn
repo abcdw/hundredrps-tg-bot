@@ -1,3 +1,5 @@
 {:http/server     {:port 8080 :handler #ig/ref :handler/webhook}
- :handler/webhook {:api-token #ig/ref :tg/token}
- :tg/token        #env TELEGRAM_TOKEN}
+ :handler/webhook {:api-token #ig/ref :tg/token
+                   :db        #ig/ref :db/value}
+ :tg/token        #env TELEGRAM_TOKEN
+ :db/value        {}}

@@ -34,7 +34,9 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
-(defmethod ig/init-key :handler/webhook [_ {:keys [api-token]}]
+(defmethod ig/init-key :db/value [_ val] (atom {}))
+
+(defmethod ig/init-key :handler/webhook [_ {:keys [api-token db]}]
   (fn [{:keys [body]}]
     (let [input (j/read-value body j/keyword-keys-object-mapper)
 
