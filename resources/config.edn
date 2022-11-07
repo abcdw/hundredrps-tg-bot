@@ -2,4 +2,4 @@
  :handler/webhook {:api-token #ig/ref :tg/token
                    :db        #ig/ref :db/value}
  :tg/token        #env TELEGRAM_TOKEN
- :db/value        {}}
+ :db/value        {:logic #include "logic.edn"}}

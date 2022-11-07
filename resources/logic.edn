@@ -1,0 +1,48 @@
+{:messages
+ {:start-message
+  {:text "Выбери открытку /letterForMother, /bestWoman, /loveLetter."}
+  :unknown-card
+  {:text "Чёт не понял какая откртыка."}
+  :enough
+  {:text "Всё насобирались."}
+  :thank-you
+  {:text "О, пасиб за сообщение, подумаю чё с ним делать."}
+
+  :letter-for-mother
+  {:greeting
+   {:text "Юхууу! вы выбрали открытку Письмо Маме."}}}
+
+ :matchers {}
+
+ :steps
+ {nil
+   {:transitions
+    [:orn
+     [{:id      :start
+       :to      :start
+       :message #ref [:messages :start-message]}
+      [:map [:text [:and :string [:= "/start"]]]]]
+     [{:id      :anything
+       :to      :start
+       :message #ref [:messages :start-message]}
+      [:map]]]}
+
+   :start
+   {:transitions
+    [:orn
+     [{:to      :letter-for-mother
+       :message #ref [:messages :letter-for-mother :greeting]}
+      [:map [:text [:and :string [:= "/letterForMother"]]]]]
+     [{:to      :start
+       :message #ref [:messages :unknown-card]}
+      [:map [:text :string]]]]}
+
+   :letter-for-mother
+   {:transitions
+    [:orn
+     [{:to      nil
+       :message #ref [:messages :enough]}
+      [:map [:text [:and :string [:= "/stop"]]]]]
+     [{:to      :letter-for-mother
+       :message #ref [:messages :thank-you]}
+      [:map]]]}}}

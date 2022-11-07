@@ -35,7 +35,7 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
-(defmethod ig/init-key :db/value [_ val] (atom {}))
+(defmethod ig/init-key :db/value [_ val] (atom val))
 
 (defmethod ig/init-key :handler/webhook [_ {:keys [api-token db] :as ctx}]
   (cards/get-handler ctx))
