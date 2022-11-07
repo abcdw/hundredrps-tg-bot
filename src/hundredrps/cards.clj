@@ -1,5 +1,6 @@
 (ns hundredrps.cards
   (:require [hundredrps.tg :as tg]
+            [jsonista.core :as j]
             [malli.core :as m]))
 
 (defn deconstruct-update
@@ -130,3 +131,23 @@
         reply (:reply new-state)]
     {:reply reply
      :state (dissoc new-state :reply)}))
+
+(defn get-handler
+  "Returns a function, which process http requests."
+  [{:keys [api-token db]}]
+  (fn [{:keys [body] :as request}]
+    (let [input (j/read-value body j/keyword-keys-object-mapper)
+
+          chat-id (tg/get-chat-id input)
+
+          {:keys [reply state]}
+          (process-update (get-in @db [chat-id :state] {}) input)
+
+          _ (swap! db assoc-in [chat-id :state] state)
+
+          reply-body (j/write-value-as-string reply)]
+
+      {:status  200
+       :headers {"Content-Type"   "application/json"
+                 "Content-Length" (count reply-body)}
+       :body    reply-body})))

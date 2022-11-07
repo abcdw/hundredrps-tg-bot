@@ -6,7 +6,6 @@
    [hundredrps.cards :as cards]
    [hundredrps.tg :as tg]
    [integrant.core :as ig]
-   [jsonista.core :as j]
    [org.httpkit.client :as http]
    [org.httpkit.server :as http-kit]))
 
@@ -38,23 +37,8 @@
 
 (defmethod ig/init-key :db/value [_ val] (atom {}))
 
-(defmethod ig/init-key :handler/webhook [_ {:keys [api-token db]}]
-  (fn [{:keys [body]}]
-    (let [input (j/read-value body j/keyword-keys-object-mapper)
-
-          chat-id (tg/get-chat-id input)
-
-          {:keys [reply state]}
-          (cards/process-update (get-in @db [chat-id :state] {}) input)
-
-          _ (swap! db assoc-in [chat-id :state] state)
-
-          reply-body (j/write-value-as-string reply)]
-
-      {:status  200
-       :headers {"Content-Type"   "application/json"
-                 "Content-Length" (count reply-body)}
-       :body    reply-body})))
+(defmethod ig/init-key :handler/webhook [_ {:keys [api-token db] :as ctx}]
+  (cards/get-handler ctx))
 
 (defn get-config
   "Read integrant system description from config.edn."
