@@ -7,7 +7,8 @@
    [hundredrps.tg :as tg]
    [integrant.core :as ig]
    [org.httpkit.client :as http]
-   [org.httpkit.server :as http-kit]))
+   [org.httpkit.server :as http-kit]
+   [malli.core :as m]))
 
 (defn -main
   "Entry point."
@@ -24,6 +25,14 @@
 (defmethod aero/reader 'ig/ref
   [_ tag value]
   (ig/ref value))
+
+(defmethod aero/reader 'm/parser
+  [_ tag value]
+  (let [parser (m/parser value)]
+    (fn [x]
+      (let [result (parser x)]
+        (if (= ::m/invalid result) nil result)))))
+
 
 (defmethod ig/init-key :tg/token [_ val] val)
 
