@@ -47,20 +47,20 @@
   [{:id       :start
     :to       :start
     :messages #ref [:messages :start-message]}
-   #tg/message-text #regexp "/start .*"]
+   #tg/message-text [:re "/start .*"]]
   :help
   [{:id       :help
     :messages #ref [:messages :help]}
-   #tg/message-text "/help"]
+   #tg/message-text [:= "/help"]]
   :stop
   [{:id       :stop
     :to       nil
     :messages #ref [:messages :stop]}
-   #tg/message-text "/stop"]
+   #tg/message-text [:= "/stop"]]
   :letter-for-mother
   [{:to       :letter-for-mother
     :messages #ref [:messages :letter-for-mother :greeting]}
-   #tg/message-text "/letterForMother"]}
+   #tg/message-text [:= "/letterForMother"]]}
 
  :global-menu
  {:commands
@@ -97,7 +97,7 @@
     #ref [:transitions :start]
     [{:to       :start
       :messages #ref [:messages :unknown-card]}
-     #tg/message-text #regexp ".*"]]}
+     #tg/message-text [:re ".*"]]]}
 
   :letter-for-mother
   {:transitions

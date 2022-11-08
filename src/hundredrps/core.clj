@@ -26,9 +26,6 @@
   [_ tag value]
   (ig/ref value))
 
-(defmethod aero/reader 'regexp
-  [_ tag value]
-  (java.util.regex.Pattern/compile value))
 
 (defmethod aero/reader 'm/parser
   [_ tag value]
@@ -39,10 +36,7 @@
 
 (defmethod aero/reader 'tg/message-text
   [_ tag value]
-  [:map [:text [:and :string
-                (if (= java.util.regex.Pattern (type value))
-                  [:re value]
-                  [:= value])]]])
+  [:map [:text [:and :string value]]])
 
 (defmethod ig/init-key :tg/token [_ val] val)
 
