@@ -47,65 +47,63 @@
     (merge {:step step} value {:value (or text photo)})))
 
 (defn try-to-make-step
-  [state steps upd]
-  (let [msg (tg/get-message upd)
-        msg-id (tg/get-message-id upd)
+  [state logic upd]
+  (let [msg            (tg/get-message upd)
+        msg-id         (tg/get-message-id upd)
         edited-message (:edited_message upd)
-        chat-id (tg/get-chat-id upd)
+        chat-id        (tg/get-chat-id upd)
 
         step (if edited-message
                (get-in state [:values msg-id :step])
                (:step state))
 
-        {:keys [transitions]} (get steps step)
+        global-menu (get-in logic [:global-menu :transitions])
+        transitions (get-in logic [:steps step :transitions])
 
-        result (m/parse transitions msg)
-
-        matched? (not= ::m/invalid result)]
+        [result _] (or
+                    (global-menu msg)
+                    (transitions msg))]
 
     (cond-> state
       edited-message
-      (assoc :reply
-             (if matched?
-               (tg/send-text-message
-                (tg/get-chat-id upd)
-                "Мы поредактировали чё вы хотели.")
-               (tg/send-text-message
-                (tg/get-chat-id upd)
-                "Сорян, попробуй ещё раз.")))
+      (assoc :replies
+             [(if result
+                (tg/send-text-message
+                 (tg/get-chat-id upd)
+                 "Мы поредактировали чё вы хотели.")
+                (tg/send-text-message
+                 (tg/get-chat-id upd)
+                 "Сорян, попробуй ещё раз."))])
 
       (not edited-message)
-      (assoc :reply
-             (if (get-in result [0 :message])
-               (merge {:chat_id chat-id :method "sendMessage"}
-                      (get-in result [0 :message]))
-               (tg/send-text-message
-                (tg/get-chat-id upd)
-                (with-out-str
-                  (clojure.pprint/pprint result)))))
+      (assoc :replies
+             (if (:messages result)
+               (:messages result)
+               [(tg/send-text-message
+                 (tg/get-chat-id upd)
+                 (with-out-str
+                   (clojure.pprint/pprint result)))]))
 
-      (and matched? (not edited-message))
-      (assoc :step (get-in result [0 :to]))
+      (and result (contains? result :to) (not edited-message))
+      (assoc :step (:to result))
 
-      matched?
+      result
       (update-in [:values (tg/get-message-id upd)]
                  update-state-value upd step))))
 
 (defn process-update
-  [state steps upd]
+  [state logic upd]
   (let [chat-id      (tg/get-chat-id upd)
         message-type (tg/get-message-type upd)
         message-id   (tg/get-message-id upd)
-        text         (or (:text (tg/get-message upd))
-                         "No text in previous message.")
 
         new-state (-> state
                       (update :updates #(if % (conj % upd) [upd]))
-                      (try-to-make-step steps upd))
+                      (try-to-make-step logic upd))
 
-        reply (:reply new-state)]
-    {:reply reply
-     :state (dissoc new-state :reply)}))
+        replies (:replies new-state)]
+    {:replies replies
+     :state (dissoc new-state :replies)}))
 
 (defn get-handler
   "Returns a function, which process http requests."
@@ -115,16 +113,19 @@
 
           chat-id (tg/get-chat-id input)
 
-          steps (get-in @db [:logic :steps])
+          logic (get-in @db [:logic])
 
-          {:keys [reply state]}
-          (process-update (get-in @db [chat-id :state] {}) steps input)
+          {:keys [state] :as result}
+          (process-update (get-in @db [chat-id :state] {}) logic input)
 
-          _ (swap! db assoc-in [chat-id :state] state)
+          replies (map #(assoc % :chat_id chat-id) (:replies result))
+          _ (swap! db assoc-in [chat-id :state] state)]
 
-          reply-body (j/write-value-as-string reply)]
+      (println "chat-id ================> " chat-id)
+      ;; (println "replies=> " replies)
 
-      {:status  200
-       :headers {"Content-Type"   "application/json"
-                 "Content-Length" (count reply-body)}
-       :body    reply-body})))
+      (if (= 1 (count replies))
+        (msg->http-response (first replies))
+        (do
+          (doall (map #(deref (async-call api-token %)) replies))
+          {:status 200})))))
