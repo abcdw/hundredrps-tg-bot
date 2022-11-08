@@ -1,25 +1,34 @@
-{:messages
- {:start-message
-  [{:text "Привет\\! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео\\.
-
-У нас на выбор есть несколько открыток:
-1\\. «Лучшая женщина в мире» [видео](https://disk.yandex.ru/i/_96I19wyaGsPUQ)\\.
-2\\. «Письмо маме» [видео](https://disk.yandex.ru/i/A2lwriRYnsfv3w)\\.
-3\\. «Письмо о любви» [видео](https://disk.yandex.ru/i/dC_kJTF4sixzRQ)\\."
-    :parse_mode               "MarkdownV2"
+{:card-cost "199 ₽"
+ :messages
+ {:press-start
+  [{:text "Ого, вы не нажали /start, нажимайте скорее!"
+    :reply_markup {:remove_keyboard true}}]
+  :start
+  [{:text "Привет! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео ниже. "
     :disable_web_page_preview true
     :reply_markup
     {:inline_keyboard
-     [[{:text          "«Лучшая женщина в мире»"
-        :callback_data ":best-woman"}]
-      [{:text "«Письмо маме»"
-        :url  "https://google.com"}]
-      [{:text "«Письмо о любви»"
-        :url  "https://google.com"}]]}}
-   {:text "another message"}]
+     [[{:text "Как выглядит «Лучшая женщина в мире»"
+        :url  "https://disk.yandex.ru/i/_96I19wyaGsPUQ"}]
+      [{:text "Как выглядит «Письмо маме»"
+        :url  "https://disk.yandex.ru/i/A2lwriRYnsfv3w"}]
+      [{:text "Как выглядит «Письмо о любви»"
+        :url  "https://disk.yandex.ru/i/dC_kJTF4sixzRQ"}]]}}
+   {:text
+    #join
+    ["Стоимость услуги " #ref [:card-cost]
+     ". Если у вас остались вопросы или что-то не сработает, "
+     "пишите нам @cardsandcare"]}
+   {:reply_markup {:remove_keyboard true}
+    :text
+    "Выберите откытку:
+1. Лучшая женщина в мире (открытка на 8 марта для мамы) - нажмите на /bestWoman
+2. Письмо маме (трогательное письмо для мамы) - нажмите на /letterForMother
+3. Письмо о любви (романтическое письмо для любимого человека) - нажмите на /loveLetter"}]
 
   :stop
-  [{:text "Пока! Напиши нам что не понравилось на @cardsandcare"}]
+  [{:text "Пока! Напиши нам что не понравилось на @cardsandcare"
+    :reply_markup {:remove_keyboard true}}]
 
   :help
   [{:text "/start - Запустить бота / Перезапустить бота
@@ -28,7 +37,10 @@
 /bestWoman - Лучшая женщина в мире (открытка на 8 марта для мамы)
 /letterForMother - Письмо маме (трогательное письмо для мамы)
 /loveLetter - Письмо о любви (романтическое письмо для любимого человека)
-Если что-то не работает, перезапустите бота командой /start и пройдите заново. Если не поможет, напишите в телеграм @cardsandcare"}]
+
+Если что-то не работает, перезапустите бота командой /start и пройдите заново.
+
+Если не поможет, напишите в телеграм @cardsandcare"}]
 
   :unknown-card
   [{:text "Чёт не понял какая откртыка."}]
@@ -38,16 +50,28 @@
   :thank-you
   [{:text "О, пасиб за сообщение, подумаю чё с ним делать."}]
 
+  :understandable
+  [{:text "Пожалуйста прочитайте сообщения выше и нажмите кнопку понятно."}]
+
   :letter-for-mother
   {:greeting
-   [{:text "Юхууу! вы выбрали открытку Письмо Маме."}]}}
+   [{:text "Чтобы получилась открытка для мамы, ответьте на 10 коротких вопросов. После выполнения всех пунктов сформируется pdf-открытка, которую можно скачать прямо тут, в боте."}
+    {:text "Бот управляется текстом и кнопками, в зависимости от вопроса. Чтобы переключаться между этими режимами, нажимайте на значок кнопок, ищите его справа."}
+    {:method "sendPhoto"
+     :photo "AgACAgIAAxkBAAIBvWNqCLDnCb9-t0dIY1L1VF_4CzsOAALvxzEb9YdRS1cwpNkuLbkRAQADAgADeQADKwQ"
+     :reply_markup
+     {:keyboard [[{:text "Понятно"}]]}}]
+   :together
+   [{:text "Давайте начнём! Живете раздельно с мамой?"
+     :reply_markup
+     {:keyboard [[{:text "Раздельно"} {:text "Вместе"}]]}}]}}
 
  :transitions
  {:start
   [{:id       :start
     :to       :start
-    :messages #ref [:messages :start-message]}
-   #tg/message-text [:re "/start .*"]]
+    :messages #ref [:messages :start]}
+   #tg/message-text [:re "/start.*"]]
   :help
   [{:id       :help
     :messages #ref [:messages :help]}
@@ -58,7 +82,7 @@
     :messages #ref [:messages :stop]}
    #tg/message-text [:= "/stop"]]
   :letter-for-mother
-  [{:to       :letter-for-mother
+  [{:to       [:letter-for-mother :greeting]
     :messages #ref [:messages :letter-for-mother :greeting]}
    #tg/message-text [:= "/letterForMother"]]}
 
@@ -85,9 +109,7 @@
   {:transitions
    #m/parser
    [:orn
-    [{:id       :anything
-      :to       :start
-      :messages #ref [:messages :start-message]}
+    [{:messages #ref [:messages :press-start]}
      [:map]]]}
 
   :start
@@ -99,10 +121,12 @@
       :messages #ref [:messages :unknown-card]}
      #tg/message-text [:re ".*"]]]}
 
-  :letter-for-mother
+  [:letter-for-mother :greeting]
   {:transitions
    #m/parser
    [:orn
-    [{:to       :letter-for-mother
-      :messages #ref [:messages :thank-you]}
+    [{:to       [:letter-for-mother :together]
+      :messages #ref [:messages :letter-for-mother :together]}
+     #tg/message-text [:re "^(?iu)понятно"]]
+    [{:messages #ref [:messages :understandable]}
      [:map]]]}}}
