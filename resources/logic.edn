@@ -47,31 +47,38 @@
   [{:id       :start
     :to       :start
     :messages #ref [:messages :start-message]}
-   [:map [:text [:and :string [:= "/start"]]]]]
+   #tg/message-text #regexp "/start .*"]
   :help
   [{:id       :help
     :messages #ref [:messages :help]}
-   [:map [:text [:and :string [:= "/help"]]]]]
+   #tg/message-text "/help"]
   :stop
   [{:id       :stop
     :to       nil
     :messages #ref [:messages :stop]}
-   [:map [:text [:and :string [:= "/stop"]]]]]}
+   #tg/message-text "/stop"]
+  :letter-for-mother
+  [{:to       :letter-for-mother
+    :messages #ref [:messages :letter-for-mother :greeting]}
+   #tg/message-text "/letterForMother"]}
 
  :global-menu
  {:commands
-  [{:name "/start"
+  [{:command     "/start"
     :description "Запустить бота / Перезапустить бота"}
-   {:name "/stop"
+   {:command     "/stop"
     :description "Остановить бота"}
-   {:name "/help"
-    :description "Список команд"}]
+   {:command     "/help"
+    :description "Список команд"}
+   {:command     "/letterForMother"
+    :description "Письмо маме (трогательное письмо для мамы)"}]
   :transitions
   #m/parser
   [:orn
    #ref [:transitions :start]
    #ref [:transitions :help]
-   #ref [:transitions :stop]]}
+   #ref [:transitions :stop]
+   #ref [:transitions :letter-for-mother]]}
 
  :steps
  {nil
@@ -87,21 +94,15 @@
   {:transitions
    #m/parser
    [:orn
-    [{:to       :letter-for-mother
-      :messages #ref [:messages :letter-for-mother :greeting]}
-     [:map [:text [:and :string [:= "/letterForMother"]]]]]
     #ref [:transitions :start]
     [{:to       :start
       :messages #ref [:messages :unknown-card]}
-     [:map [:text :string]]]]}
+     #tg/message-text #regexp ".*"]]}
 
   :letter-for-mother
   {:transitions
    #m/parser
    [:orn
-    [{:to       nil
-      :messages #ref [:messages :enough]}
-     [:map [:text [:and :string [:= "/stop"]]]]]
     [{:to       :letter-for-mother
       :messages #ref [:messages :thank-you]}
      [:map]]]}}}
