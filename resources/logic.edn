@@ -1,48 +1,101 @@
 {:messages
  {:start-message
-  {:text "Выбери открытку /letterForMother, /bestWoman, /loveLetter."}
+  [{:text "Привет\\! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео\\.
+
+У нас на выбор есть несколько открыток:
+1\\. «Лучшая женщина в мире» [видео](https://disk.yandex.ru/i/_96I19wyaGsPUQ)\\.
+2\\. «Письмо маме» [видео](https://disk.yandex.ru/i/A2lwriRYnsfv3w)\\.
+3\\. «Письмо о любви» [видео](https://disk.yandex.ru/i/dC_kJTF4sixzRQ)\\."
+    :parse_mode               "MarkdownV2"
+    :disable_web_page_preview true
+    :reply_markup
+    {:inline_keyboard
+     [[{:text          "«Лучшая женщина в мире»"
+        :callback_data ":best-woman"}]
+      [{:text "«Письмо маме»"
+        :url  "https://google.com"}]
+      [{:text "«Письмо о любви»"
+        :url  "https://google.com"}]]}}
+   {:text "another message"}]
+
+  :stop
+  [{:text "bye bye"}]
+
+  :help
+  [{:text "help will be here"}]
+
   :unknown-card
-  {:text "Чёт не понял какая откртыка."}
+  [{:text "Чёт не понял какая откртыка."}]
+
   :enough
-  {:text "Всё насобирались."}
+  [{:text "Всё насобирались."}]
   :thank-you
-  {:text "О, пасиб за сообщение, подумаю чё с ним делать."}
+  [{:text "О, пасиб за сообщение, подумаю чё с ним делать."}]
 
   :letter-for-mother
   {:greeting
-   {:text "Юхууу! вы выбрали открытку Письмо Маме."}}}
+   [{:text "Юхууу! вы выбрали открытку Письмо Маме."}]}}
 
- :matchers {}
+ :transitions
+ {:start
+  [{:id       :start
+    :to       :start
+    :messages #ref [:messages :start-message]}
+   [:map [:text [:and :string [:= "/start"]]]]]
+  :help
+  [{:id       :help
+    :messages #ref [:messages :help]}
+   [:map [:text [:and :string [:= "/help"]]]]]
+  :stop
+  [{:id       :stop
+    :to       nil
+    :messages #ref [:messages :stop]}
+   [:map [:text [:and :string [:= "/stop"]]]]]}
+
+ :global-menu
+ {:commands
+  [{:name "/start"
+    :description "Запустить бота / Перезапустить бота"}
+   {:name "/stop"
+    :description "Остановить бота"}
+   {:name "/help"
+    :description "Список команд"}]
+  :transitions
+  #m/parser
+  [:orn
+   #ref [:transitions :start]
+   #ref [:transitions :help]
+   #ref [:transitions :stop]]}
 
  :steps
  {nil
-   {:transitions
-    [:orn
-     [{:id      :start
-       :to      :start
-       :message #ref [:messages :start-message]}
-      [:map [:text [:and :string [:= "/start"]]]]]
-     [{:id      :anything
-       :to      :start
-       :message #ref [:messages :start-message]}
-      [:map]]]}
+  {:transitions
+   #m/parser
+   [:orn
+    [{:id       :anything
+      :to       :start
+      :messages #ref [:messages :start-message]}
+     [:map]]]}
 
-   :start
-   {:transitions
-    [:orn
-     [{:to      :letter-for-mother
-       :message #ref [:messages :letter-for-mother :greeting]}
-      [:map [:text [:and :string [:= "/letterForMother"]]]]]
-     [{:to      :start
-       :message #ref [:messages :unknown-card]}
-      [:map [:text :string]]]]}
+  :start
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       :letter-for-mother
+      :messages #ref [:messages :letter-for-mother :greeting]}
+     [:map [:text [:and :string [:= "/letterForMother"]]]]]
+    #ref [:transitions :start]
+    [{:to       :start
+      :messages #ref [:messages :unknown-card]}
+     [:map [:text :string]]]]}
 
-   :letter-for-mother
-   {:transitions
-    [:orn
-     [{:to      nil
-       :message #ref [:messages :enough]}
-      [:map [:text [:and :string [:= "/stop"]]]]]
-     [{:to      :letter-for-mother
-       :message #ref [:messages :thank-you]}
-      [:map]]]}}}
+  :letter-for-mother
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       nil
+      :messages #ref [:messages :enough]}
+     [:map [:text [:and :string [:= "/stop"]]]]]
+    [{:to       :letter-for-mother
+      :messages #ref [:messages :thank-you]}
+     [:map]]]}}}
