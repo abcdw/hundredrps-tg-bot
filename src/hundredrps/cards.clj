@@ -1,7 +1,32 @@
 (ns hundredrps.cards
   (:require [hundredrps.tg :as tg]
+            [org.httpkit.client :as http]
             [jsonista.core :as j]
             [malli.core :as m]))
+
+(defn map->json-http-request
+  "Convert map to json, and then wrap in ring form so it can be used in
+  POST query."
+  [x]
+  (let [body (j/write-value-as-string x)]
+    {:headers {"Content-Type"   "application/json"
+               "Content-Length" (count body)}
+     :body    body}))
+
+(defn msg->http-response
+  "Convert msg to json and wrap in ring form, uses sendMessage if no
+  method specified."
+  [msg]
+  (-> (merge {:method "sendMessage"} msg)
+      map->json-http-request
+      (assoc  :status 200)))
+
+(defn async-call [api-token x & [callback]]
+  (let [{:keys [method] :or {method "sendMessage"}} x
+
+        url (str "https://api.telegram.org/bot" api-token "/" method)
+        request (-> x (dissoc :method) map->json-http-request)]
+    (http/post url request callback)))
 
 (defn deconstruct-update
   "Extract message, message-type and possible photo and text from
