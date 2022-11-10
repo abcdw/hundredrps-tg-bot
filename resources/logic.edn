@@ -1,8 +1,9 @@
-{:card-cost "199 ₽"
+{:card-cost 199
  :messages
  {:press-start
   [{:text "Ого, вы не нажали /start, нажимайте скорее!"
     :reply_markup {:remove_keyboard true}}]
+
   :start
   [{:text "Привет! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео ниже. "
     :disable_web_page_preview true
@@ -17,7 +18,7 @@
    {:text
     #join
     ["Стоимость услуги " #ref [:card-cost]
-     ". Если у вас остались вопросы или что-то не сработает, "
+     " ₽. Если у вас остались вопросы или что-то не сработает, "
      "пишите нам @cardsandcare"]}
    {:reply_markup {:remove_keyboard true}
     :text
@@ -49,7 +50,8 @@
   [{:text "Всё насобирались."}]
   :thank-you
   [{:text "О, пасиб за сообщение, подумаю чё с ним делать."}]
-
+  :wrong-input
+  [{:text "Повторите попытку неправильное сообщение!"}]
   :understandable
   [{:text "Пожалуйста прочитайте сообщения выше и нажмите кнопку понятно."}]
 
@@ -59,12 +61,70 @@
     {:text "Бот управляется текстом и кнопками, в зависимости от вопроса. Чтобы переключаться между этими режимами, нажимайте на значок кнопок, ищите его справа."}
     {:method "sendPhoto"
      :photo "AgACAgIAAxkBAAIBvWNqCLDnCb9-t0dIY1L1VF_4CzsOAALvxzEb9YdRS1cwpNkuLbkRAQADAgADeQADKwQ"
-     :reply_markup
-     {:keyboard [[{:text "Понятно"}]]}}]
-   :together
+     :reply_markup {:keyboard [[{:text "Понятно"}]]}}]
+
+   :live-together?
    [{:text "Давайте начнём! Живете раздельно с мамой?"
+     :reply_markup {:keyboard [[{:text "Раздельно"} {:text "Вместе"}]]}}]
+
+   :sibling
+   [{:text "Письмо будет написано от сына или от дочери?"
+     :reply_markup {:keyboard [[{:text "От сына"} {:text "От дочери"}]]}}]
+
+   :no-photo-text "У меня нет фотографии"
+   :photo-with-mom
+   [{:text "Загрузите фото, на котором вы, счастливые, вместе с мамой.
+
+Чтобы загрузить фото, нажмите на скрепку внизу слева и выберите фотографию из раздела «фото или видео»."
      :reply_markup
-     {:keyboard [[{:text "Раздельно"} {:text "Вместе"}]]}}]}}
+     {:keyboard
+      [[{:text #ref [:messages :letter-for-mother :no-photo-text]}]]}}]
+
+   :cooked-nothing "Мама ничего не готовила, но у нее много других хороших качеств."
+   :what-mom-cooked
+   [{:text "Осталось ещё 4 вопроса и всё готово! Продолжите фразу: «Я скучаю по тому, как ты готовила мне ...». Напишите только названия блюд. Например: запеканку и те самые пирожки."
+     :reply_markup
+     {:keyboard
+      [[{:text #ref [:messages :letter-for-mother :cooked-nothing]}]]}}]
+
+   :have-children?
+   [{:text "У вас самих есть дети?"
+     :reply_markup {:keyboard [[{:text "Да"} {:text "Нет"}]]}}]
+
+   :childhood-memories
+   [{:text "Почти закончили! Поделитесь с мамой своим детским воспоминанием, связанным с ней. Это может быть короткая история или забавное признание, что это все-таки вы тогда разбили её любимую вазу :) Максимум 300 знаков, это около 40-45 слов. К сожалению, в нашем шрифте нет эмодзи, так что придется без них."
+     :reply_markup {:remove_keyboard true}}]
+
+   :add-warm-memories?
+   [{:text "Добавить после вашей истории эту фразу? «Я с теплом и благодарностью вспоминаю то время. Спасибо тебе за всё»"
+     :reply_markup {:keyboard  [[{:text "Да"} {:text "Нет"}]]}}]
+
+   :signature
+   [{:text "Осталось подписать письмо, например: «Твоя любящая дочь» или «От сына»"
+     :reply_markup
+     {:remove_keyboard true}}]
+
+   :maybe-edit
+   [{:text "Если хотите отредактировать какой-то пункт, просто введите и отправьте его цифру без скобок.
+
+1) Как живете с мамой? - Раздельно
+2) Письмо будет написано от сына или от дочери? - От сына
+3) Вы не добавили фото, хотите всё-таки добавить?
+4) Ваша мама готовила вам: - Мама ничего не готовила, но у нее много других хороших качеств
+5) У вас есть дети? - Нет
+6) Ваша история - ha
+7) Добавить после вашей истории фразу благодарности? - Да
+8) Ваша подпись - Да"
+     :reply_markup {:keyboard [[{:text "Всё окей!"}]]}}]
+
+   :payment
+   [{:method "sendInvoice"
+     :title "Цифровая открытка «Письмо маме»"
+     :description "Формат PDF файл"
+     :payload ":letter-for-mother"
+     :provider_token "381764678:TEST:45134"
+     :currency "RUB"
+     :prices [{:label "«Письмо маме»" :amount #cost->amount #ref [:card-cost]}]}]}}
 
  :transitions
  {:start
@@ -125,8 +185,122 @@
   {:transitions
    #m/parser
    [:orn
-    [{:to       [:letter-for-mother :together]
-      :messages #ref [:messages :letter-for-mother :together]}
+    [{:to       [:letter-for-mother :live-together?]
+      :messages #ref [:messages :letter-for-mother :live-together?]}
      #tg/message-text [:re "^(?iu)понятно"]]
     [{:messages #ref [:messages :understandable]}
+     [:map]]]}
+
+  [:letter-for-mother :live-together?]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :sibling]
+      :messages #ref [:messages :letter-for-mother :sibling]}
+     #tg/message-text [:orn [true [:re "^(?iu)вместе"]]
+                       [false [:re "^(?iu)раздельно"]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :sibling]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :photo-with-mom]
+      :messages #ref [:messages :letter-for-mother :photo-with-mom]}
+     #tg/message-text [:orn [:son [:re "(?iu)сына"]]
+                       [:daugther [:re "(?iu)дочери"]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :photo-with-mom]
+  {:data-path [:photo]
+   :transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :what-mom-cooked]
+      :messages #ref [:messages :letter-for-mother :what-mom-cooked]}
+     [:map
+      [:message
+       [:or
+        [:map [:text
+               [:and :string
+                [:orn
+                 [nil
+                  [:= #ref [:messages :letter-for-mother :no-photo-text]]]]]]]
+        [:map [:photo :string]]]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :what-mom-cooked]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :have-children?]
+      :messages #ref [:messages :letter-for-mother :have-children?]}
+     #tg/message-text
+     [:orn
+      [nil
+       [:= #ref [:messages :letter-for-mother :cooked-nothing]]]
+      [:text [:re "^.{1,300}$"]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :have-children?]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :childhood-memories]
+      :messages #ref [:messages :letter-for-mother :childhood-memories]}
+     #tg/message-text [:orn [true [:re "^(?iu)да$"]]
+                       [false [:re "^(?iu)нет$"]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :childhood-memories]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :add-warm-memories?]
+      :messages #ref [:messages :letter-for-mother :add-warm-memories?]}
+     #tg/message-text [:re "^.{1,300}$"]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :add-warm-memories?]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :signature]
+      :messages #ref [:messages :letter-for-mother :signature]}
+     #tg/message-text [:orn [true [:re "^(?iu)да$"]]
+                       [false [:re "^(?iu)нет$"]]]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :signature]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :maybe-edit]
+      :messages #ref [:messages :letter-for-mother :maybe-edit]}
+     #tg/message-text [:re "^.{1,300}$"]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :maybe-edit]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:to       [:letter-for-mother :payment]
+      :messages #ref [:messages :letter-for-mother :payment]}
+     #tg/message-text [:re "^(?ui)всё окей!$"]]
+    [{:messages #ref [:messages :wrong-input]}
+     [:map]]]}
+
+  [:letter-for-mother :payment]
+  {:transitions
+   #m/parser
+   [:orn
+    [{:messages #ref [:messages :wrong-input]}
      [:map]]]}}}

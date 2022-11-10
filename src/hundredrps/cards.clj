@@ -60,9 +60,9 @@
         global-menu (get-in logic [:global-menu :transitions])
         transitions (get-in logic [:steps step :transitions])
 
-        [result _] (or
-                    (global-menu msg)
-                    (transitions msg))]
+        [result parsed-upd] (or
+                             (global-menu upd)
+                             (transitions upd))]
 
     (cond-> state
       edited-message
@@ -89,7 +89,7 @@
 
       result
       (update-in [:values (tg/get-message-id upd)]
-                 update-state-value upd step))))
+                 update-state-value parsed-upd step))))
 
 (defn process-update
   [state logic upd]

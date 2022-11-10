@@ -19,13 +19,11 @@
   "Can be used for writing a simple test."
   (+ a b))
 
-
 
 
 (defmethod aero/reader 'ig/ref
   [_ tag value]
   (ig/ref value))
-
 
 (defmethod aero/reader 'm/parser
   [_ tag value]
@@ -36,7 +34,12 @@
 
 (defmethod aero/reader 'tg/message-text
   [_ tag value]
-  [:map [:text [:and :string value]]])
+  [:map [:message [:map [:text [:and :string value]]]]])
+
+(defmethod aero/reader 'cost->amount
+  [_ tag value]
+  (* 100 value))
+
 
 (defmethod ig/init-key :tg/token [_ val] val)
 
