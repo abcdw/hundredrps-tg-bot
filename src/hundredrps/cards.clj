@@ -106,8 +106,11 @@
      :state (dissoc new-state :replies)}))
 
 (defn get-handler
-  "Returns a function, which process http requests."
-  [{:keys [api-token db]}]
+  "Returns a function, which process http requests.
+  `silent?` control if handler send messages at all it useful to setup
+  the needed state before testing. `verbose?` forces handler to reply
+  always with api call rather than return value to webhook."
+  [{:keys [api-token db silent? verbose?]}]
   (fn [{:keys [body] :as request}]
     (let [input (j/read-value body j/keyword-keys-object-mapper)
 
@@ -124,8 +127,9 @@
       (println "chat-id ================> " chat-id)
       ;; (println "replies=> " replies)
 
-      (if (= 1 (count replies))
-        (msg->http-response (first replies))
-        (do
-          (doall (map #(deref (async-call api-token %)) replies))
-          {:status 200})))))
+      (if-not silent?
+        (if (and (= 1 (count replies)) (not verbose?))
+          (msg->http-response (first replies))
+          (do
+            (doall (map #(deref (async-call api-token %)) replies))
+            {:status 200}))))))
