@@ -1,12 +1,11 @@
 {:card-cost 199
  :messages
  {:press-start
-  [{:text "Ого, вы не нажали /start, нажимайте скорее!"
+  [{:text         "Ого, вы не нажали /start, нажимайте скорее!"
     :reply_markup {:remove_keyboard true}}]
 
   :start
   [{:text "Привет! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео ниже. "
-    :disable_web_page_preview true
     :reply_markup
     {:inline_keyboard
      [[{:text "Как выглядит «Лучшая женщина в мире»"
@@ -28,7 +27,7 @@
 3. Письмо о любви (романтическое письмо для любимого человека) - нажмите на /loveLetter"}]
 
   :stop
-  [{:text "Пока! Напиши нам что не понравилось на @cardsandcare"
+  [{:text         "Пока! Напиши нам что не понравилось на @cardsandcare"
     :reply_markup {:remove_keyboard true}}]
 
   :help
@@ -59,16 +58,16 @@
   {:greeting
    [{:text "Чтобы получилась открытка для мамы, ответьте на 10 коротких вопросов. После выполнения всех пунктов сформируется pdf-открытка, которую можно скачать прямо тут, в боте."}
     {:text "Бот управляется текстом и кнопками, в зависимости от вопроса. Чтобы переключаться между этими режимами, нажимайте на значок кнопок, ищите его справа."}
-    {:method "sendPhoto"
-     :photo "AgACAgIAAxkBAAIBvWNqCLDnCb9-t0dIY1L1VF_4CzsOAALvxzEb9YdRS1cwpNkuLbkRAQADAgADeQADKwQ"
+    {:method       "sendPhoto"
+     :photo        "AgACAgIAAxkBAAIBvWNqCLDnCb9-t0dIY1L1VF_4CzsOAALvxzEb9YdRS1cwpNkuLbkRAQADAgADeQADKwQ"
      :reply_markup {:keyboard [[{:text "Понятно"}]]}}]
 
    :live-together?
-   [{:text "Давайте начнём! Живете раздельно с мамой?"
+   [{:text         "Давайте начнём! Живете раздельно с мамой?"
      :reply_markup {:keyboard [[{:text "Раздельно"} {:text "Вместе"}]]}}]
 
    :sibling
-   [{:text "Письмо будет написано от сына или от дочери?"
+   [{:text         "Письмо будет написано от сына или от дочери?"
      :reply_markup {:keyboard [[{:text "От сына"} {:text "От дочери"}]]}}]
 
    :no-photo-text "У меня нет фотографии"
@@ -88,21 +87,20 @@
       [[{:text #ref [:messages :letter-for-mother :cooked-nothing]}]]}}]
 
    :have-children?
-   [{:text "У вас самих есть дети?"
+   [{:text         "У вас самих есть дети?"
      :reply_markup {:keyboard [[{:text "Да"} {:text "Нет"}]]}}]
 
    :childhood-memories
-   [{:text "Почти закончили! Поделитесь с мамой своим детским воспоминанием, связанным с ней. Это может быть короткая история или забавное признание, что это все-таки вы тогда разбили её любимую вазу :) Максимум 300 знаков, это около 40-45 слов. К сожалению, в нашем шрифте нет эмодзи, так что придется без них."
+   [{:text         "Почти закончили! Поделитесь с мамой своим детским воспоминанием, связанным с ней. Это может быть короткая история или забавное признание, что это все-таки вы тогда разбили её любимую вазу :) Максимум 300 знаков, это около 40-45 слов. К сожалению, в нашем шрифте нет эмодзи, так что придется без них."
      :reply_markup {:remove_keyboard true}}]
 
    :add-warm-memories?
-   [{:text "Добавить после вашей истории эту фразу? «Я с теплом и благодарностью вспоминаю то время. Спасибо тебе за всё»"
-     :reply_markup {:keyboard  [[{:text "Да"} {:text "Нет"}]]}}]
+   [{:text         "Добавить после вашей истории эту фразу? «Я с теплом и благодарностью вспоминаю то время. Спасибо тебе за всё»"
+     :reply_markup {:keyboard [[{:text "Да"} {:text "Нет"}]]}}]
 
    :signature
-   [{:text "Осталось подписать письмо, например: «Твоя любящая дочь» или «От сына»"
-     :reply_markup
-     {:remove_keyboard true}}]
+   [{:text         "Осталось подписать письмо, например: «Твоя любящая дочь» или «От сына»"
+     :reply_markup {:remove_keyboard true}}]
 
    :maybe-edit
    [{:text "Если хотите отредактировать какой-то пункт, просто введите и отправьте его цифру без скобок.
@@ -118,13 +116,13 @@
      :reply_markup {:keyboard [[{:text "Всё окей!"}]]}}]
 
    :payment
-   [{:method "sendInvoice"
-     :title "Цифровая открытка «Письмо маме»"
-     :description "Формат PDF файл"
-     :payload ":letter-for-mother"
+   [{:method         "sendInvoice"
+     :title          "Цифровая открытка «Письмо маме»"
+     :description    "Формат PDF файл"
+     :payload        ":letter-for-mother"
      :provider_token "381764678:TEST:45134"
-     :currency "RUB"
-     :prices [{:label "«Письмо маме»" :amount #cost->amount #ref [:card-cost]}]}]}}
+     :currency       "RUB"
+     :prices         [{:label "«Письмо маме»" :amount #cost->amount #ref [:card-cost]}]}]}}
 
  :transitions
  {:start
