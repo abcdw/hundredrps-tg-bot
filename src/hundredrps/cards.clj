@@ -60,9 +60,20 @@
         global-menu (get-in logic [:global-menu :transitions])
         transitions (get-in logic [:steps step :transitions])
 
-        [result parsed-upd] (or
-                             (global-menu upd)
-                             (transitions upd))]
+        [{:keys [data-mapper] :as result} parsed-upd]
+        (or
+         (global-menu upd)
+         (transitions upd))
+
+        mapper-ctx  {:state state
+                     :upd   parsed-upd}
+        msg-updater #(if data-mapper
+                       (reduce
+                        (fn [acc [from to]]
+                          (->> (get-in mapper-ctx from)
+                               (assoc-in acc to)))
+                               % data-mapper)
+                       %)]
 
     (cond-> state
       edited-message
@@ -78,7 +89,7 @@
       (not edited-message)
       (assoc :replies
              (if (:messages result)
-               (:messages result)
+               (msg-updater (:messages result))
                [(tg/send-text-message
                  (tg/get-chat-id upd)
                  (with-out-str
