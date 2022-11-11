@@ -98,7 +98,7 @@
       (and result (contains? result :to) (not edited-message))
       (assoc :step (:to result))
 
-      result
+      (and result (tg/get-message-id upd))
       (update-in [:values (tg/get-message-id upd)]
                  update-state-value parsed-upd step))))
 

@@ -300,5 +300,17 @@
   {:transitions
    #m/parser
    [:orn
+    [{:data-mapper [[[:upd :pre_checkout_query :id] [0 :pre_checkout_query_id]]]
+      :messages    [{:method "answerPreCheckoutQuery"
+                     :ok     true}]}
+     [:map [:pre_checkout_query
+            [:map [:invoice_payload
+                   [:and :string [:= ":letter-for-mother"]]]]]]]
+    [{:to       :start
+      :messages [{:text "Открытку выслали голубями. А пока можете намутить ещё одну."}]}
+     [:map [:message
+            [:map [:successful_payment
+                   [:map [:invoice_payload
+                          [:and :string [:= ":letter-for-mother"]]]]]]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}}}
