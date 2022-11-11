@@ -30,7 +30,8 @@
    {:step [:letter-for-mother :what-mom-cooked],
     :value
     [nil
-     "Мама ничего не готовила, но у нее много других хороших качеств."]}})
+     "Мама ничего не готовила, но у нее много других хороших качеств."]}
+   735 {:step [:letter-for-mother :payment], :value nil}})
 
 (deftest letter-for-mother
   (testing

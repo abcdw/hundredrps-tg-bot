@@ -216,4 +216,41 @@
     :username "andrewtropin",
     :id 67562087,
     :last_name "Tropin"},
-   :text "Всё окей!"}}]
+   :text "Всё окей!"}}
+ {:update_id 961354477,
+  :pre_checkout_query
+  {:invoice_payload ":letter-for-mother",
+   :currency "RUB",
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :id "290176954225362133",
+   :total_amount 19900}}
+ {:update_id 961354478,
+  :message
+  {:date 1668144451,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 735,
+   :successful_payment
+   {:invoice_payload ":letter-for-mother",
+    :telegram_payment_charge_id
+    "5792546741_67562087_877623_7164625802911469568",
+    :currency "RUB",
+    :total_amount 19900,
+    :provider_payment_charge_id "2afff101-000f-5000-9000-18be652846c0"},
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"}}}]
