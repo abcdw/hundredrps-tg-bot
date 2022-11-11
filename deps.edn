@@ -1,11 +1,16 @@
 {:paths ["src" "resources"]
- :deps {metosin/jsonista {:mvn/version "0.3.6"}
-        aero/aero {:mvn/version "1.1.6"}
-        integrant/integrant {:mvn/version "0.8.0"}
-        http-kit/http-kit {:mvn/version "2.6.0"}
-        metosin/malli {:mvn/version "0.9.2"}
-        org.apache.pdfbox/pdfbox {:mvn/version "2.0.21"}}
+ :deps  {metosin/jsonista         {:mvn/version "0.3.6"}
+         aero/aero                {:mvn/version "1.1.6"}
+         integrant/integrant      {:mvn/version "0.8.0"}
+         http-kit/http-kit        {:mvn/version "2.6.0"}
+         metosin/malli            {:mvn/version "0.9.2"}
+         org.apache.pdfbox/pdfbox {:mvn/version "2.0.21"}}
 
- :aliases {:dev  {:extra-paths ["dev"]
-                  :extra-deps {integrant/repl {:mvn/version "0.3.2"}}}
-           :test {:extra-paths ["test"]}}}
+ :aliases
+ {:dev  {:extra-paths ["dev"]
+         :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
+  :test {:extra-paths ["test"]}
+
+  :test-runner {:extra-deps {io.github.cognitect-labs/test-runner
+                             {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                :exec-fn    cognitect.test-runner.api/test}}}
