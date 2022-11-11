@@ -12,6 +12,9 @@
 
   :run {:main-opts ["-m" "hundredrps.core"]}
 
+  :build {:deps       {org.clojure/tools.build {:mvn/version "0.8.4"}}
+          :ns-default build}
+
   :test {:extra-paths ["test"]}
 
   :test-runner {:extra-deps {io.github.cognitect-labs/test-runner
