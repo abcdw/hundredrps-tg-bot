@@ -81,6 +81,21 @@
      :last_name     "Tropin"},
     :text       "hello"}})
 
+(def pre-checkout-query
+  {:update_id 961354476,
+   :pre_checkout_query
+   {:invoice_payload ":letter-for-mother",
+    :currency        "RUB",
+    :from
+    {:first_name    "Andrew",
+     :language_code "en",
+     :is_bot        false,
+     :username      "andrewtropin",
+     :id            67562087,
+     :last_name     "Tropin"},
+    :id              "290176956541333535",
+    :total_amount    19900}})
+
 (deftest get-chat-id
   (testing "Usual message"
     (is (= 67562087 (sut/get-chat-id usual-message))))
@@ -89,7 +104,10 @@
     (is (= 67562087 (sut/get-chat-id photo-message))))
 
   (testing "Edited message"
-    (is (= 67562087 (sut/get-chat-id edited-message)))))
+    (is (= 67562087 (sut/get-chat-id edited-message))))
+
+  (testing "Update without chat key (pre-checkout-query)"
+    (is (= 67562087 (sut/get-chat-id pre-checkout-query)))))
 
 (deftest get-photo-file-id
   (testing "Best photo id"

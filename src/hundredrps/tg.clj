@@ -1,26 +1,31 @@
 (ns hundredrps.tg)
 
-(defn get-message
+(defn get-payload
   "Get message from update."
   [upd]
-  (if (get upd :edited_message)
-    (get upd :edited_message)
-    (get upd :message)))
+  (->>
+   (get upd :pre_checkout_query)
+   (get upd :edited_message)
+   (get upd :message)))
 
 (defn get-chat-id
-  "Extracts chat-id from update."
+  "Extracts chat-id from update. It backups to from id, if chat entry
+  isn't available."
   [upd]
-  (get-in (get-message upd) [:chat :id]))
+  (let [payload (get-payload upd)]
+    (->>
+     (get-in payload [:from :id])
+     (get-in payload [:chat :id]))))
 
 (defn get-photo-file-id
   "Get file id of the photo with the best resolution."
   [upd]
-  (-> upd get-message :photo last :file_id))
+  (-> upd get-payload :photo last :file_id))
 
 (defn get-message-type
   "Get message type from update."
   [upd]
-  (let [msg (-> upd get-message)]
+  (let [msg (-> upd get-payload)]
     (cond
       (:text msg) :text
       (:photo msg) :photo
@@ -29,7 +34,7 @@
 (defn get-message-id
   "Get message id."
   [upd]
-  (-> upd get-message :message_id))
+  (-> upd get-payload :message_id))
 
 
 ;;; tg api

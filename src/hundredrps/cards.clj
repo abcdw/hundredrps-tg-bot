@@ -32,7 +32,7 @@
   "Extract message, message-type and possible photo and text from
   update."
   [upd]
-  (let [message      (tg/get-message upd)
+  (let [message      (tg/get-payload upd)
         message-type (tg/get-message-type upd)]
     {:message-type message-type
      :message      message
@@ -48,7 +48,7 @@
 
 (defn try-to-make-step
   [state logic upd]
-  (let [msg            (tg/get-message upd)
+  (let [msg            (tg/get-payload upd)
         msg-id         (tg/get-message-id upd)
         edited-message (:edited_message upd)
         chat-id        (tg/get-chat-id upd)
