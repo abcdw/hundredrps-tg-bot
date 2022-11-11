@@ -9,6 +9,9 @@
  :aliases
  {:dev  {:extra-paths ["dev"]
          :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
+
+  :run {:main-opts ["-m" "hundredrps.core"]}
+
   :test {:extra-paths ["test"]}
 
   :test-runner {:extra-deps {io.github.cognitect-labs/test-runner

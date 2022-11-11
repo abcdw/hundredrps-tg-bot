@@ -10,11 +10,6 @@
    [org.httpkit.server :as http-kit]
    [malli.core :as m]))
 
-(defn -main
-  "Entry point."
-  [& args]
-  (println "hi"))
-
 (defn sum [a b]
   "Can be used for writing a simple test."
   (+ a b))
@@ -60,3 +55,9 @@
   "Read integrant system description from config.edn."
   []
   (aero/read-config (io/resource "config.edn")))
+
+(defn -main
+  "Entry point."
+  [& args]
+  (ig/init (get-config))
+  (println "hundredrps is on duty."))
