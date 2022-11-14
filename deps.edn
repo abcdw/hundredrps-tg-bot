@@ -7,12 +7,12 @@
          org.apache.pdfbox/pdfbox {:mvn/version "2.0.21"}}
 
  :aliases
- {:dev  {:extra-paths ["dev"]
-         :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
+ {:dev {:extra-paths ["dev"]
+        :extra-deps  {integrant/repl {:mvn/version "0.3.2"}}}
 
   :run {:main-opts ["-m" "hundredrps.core"]}
 
-  :build {:deps       {org.clojure/tools.build {:mvn/version "0.8.4"}}
+  :build {:extra-deps {org.clojure/tools.build {:mvn/version "0.8.4"}}
           :ns-default build}
 
   :test {:extra-paths ["test"]}
