@@ -7,4 +7,4 @@
                          (lambda () (interactive)
                            (cider-interactive-eval "(integrant.repl/reset)"))))
      (cider-preferred-build-tool . clojure-cli)
-     (cider-clojure-cli-aliases . ":dev:test"))))
+     (cider-clojure-cli-aliases . ":dev:test:build"))))
