@@ -4,7 +4,8 @@
    [hundredrps.cards :as cards]
    [hundredrps.core :refer [get-config]]
    [integrant.repl]
-   [jsonista.core :as j]))
+   [jsonista.core :as j]
+   [org.httpkit.client :as http]))
 
 (integrant.repl/set-prep! #(get-config))
 
@@ -28,7 +29,42 @@
       io/resource io/file slurp read-string
       emulate-requests))
 
+(def updates
+  (-> "assets/00-letter-for-mother.edn"
+      io/resource io/file slurp read-string))
+
+(defn to-request
+  [upd]
+  {:body (j/write-value-as-string upd)})
+
+(def url
+  "http://hundredrps.project.trop.in:50080"
+  ;; "http://localhost:8080"
+  )
+
+(defn make-async-request
+  [upd]
+  (http/post url (to-request upd)))
+
+(defn get-updates-series [_]
+  (let [new-id (rand-int 5000)]
+    (mapv #(cond-> %
+             (:message %)
+             (assoc-in [:message :chat :id] new-id)
+             (:pre_checkout_query %)
+             (assoc-in [:pre_checkout_query :from :id] new-id))
+          updates)))
+
+
 (comment
+  (let [series-count 50]
+    (dotimes [n 40]
+      (Thread/sleep 500)
+      (time
+       (doall
+        (map make-async-request
+             (apply concat
+                    (map get-updates-series (range series-count))))))))
   (pass-letter-for-mother)
   @(cards/async-call
     (:tg/token integrant.repl.state/system)
