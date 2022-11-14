@@ -42,9 +42,11 @@
 ;; https://github.com/metosin/malli#built-in-schemas
 
 (defn update-state-value
-  [value upd & [step]]
-  (let [{:keys [text photo]} (deconstruct-update upd)]
-    (merge {:step step} value {:value (or text photo)})))
+  [old-value parsed-upd & [step]]
+  (let [[path payload] (tg/get-payload parsed-upd)]
+    (merge {:step step} old-value
+           (when (and path payload)
+             {:value (get-in payload path)}))))
 
 (defn try-to-make-step
   [state logic upd]
@@ -66,7 +68,8 @@
          (transitions upd))
 
         mapper-ctx  {:state state
-                     :upd   parsed-upd}
+                     :upd   upd
+                     :parsed-upd parsed-upd}
         msg-updater #(if data-mapper
                        (reduce
                         (fn [acc [from to]]

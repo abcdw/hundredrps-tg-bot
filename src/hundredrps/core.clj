@@ -29,7 +29,11 @@
 
 (defmethod aero/reader 'tg/message-text
   [_ tag value]
-  [:map [:message [:map [:text [:and :string value]]]]])
+  [:map [:message [:orn [[:text] [:map [:text [:and :string value]]]]]]])
+
+(defmethod aero/reader 'tg/message-text-0
+  [_ tag value]
+  [:map [:message [:orn [[:text 0] [:map [:text [:and :string value]]]]]]])
 
 (defmethod aero/reader 'cost->amount
   [_ tag value]

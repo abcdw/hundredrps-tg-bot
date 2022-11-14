@@ -127,7 +127,7 @@
  :transitions
  {:start
   [{:id       :start
-    :to       :start
+    :to       [:start]
     :messages #ref [:messages :start]}
    #tg/message-text [:re "/start.*"]]
   :help
@@ -170,12 +170,12 @@
     [{:messages #ref [:messages :press-start]}
      [:map]]]}
 
-  :start
+  [:start]
   {:transitions
    #m/parser
    [:orn
     #ref [:transitions :start]
-    [{:to       :start
+    [{:to       [:start]
       :messages #ref [:messages :unknown-card]}
      #tg/message-text [:re ".*"]]]}
 
@@ -185,7 +185,7 @@
    [:orn
     [{:to       [:letter-for-mother :live-together?]
       :messages #ref [:messages :letter-for-mother :live-together?]}
-     #tg/message-text [:re "^(?iu)понятно"]]
+     #tg/message-text-0 [:orn [:understood [:re "^(?iu)понятно"]]]]
     [{:messages #ref [:messages :understandable]}
      [:map]]]}
 
@@ -195,8 +195,8 @@
    [:orn
     [{:to       [:letter-for-mother :sibling]
       :messages #ref [:messages :letter-for-mother :sibling]}
-     #tg/message-text [:orn [true [:re "^(?iu)вместе"]]
-                       [false [:re "^(?iu)раздельно"]]]]
+     #tg/message-text-0 [:orn [true [:re "^(?iu)вместе"]]
+                         [false [:re "^(?iu)раздельно"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -206,8 +206,8 @@
    [:orn
     [{:to       [:letter-for-mother :photo-with-mom]
       :messages #ref [:messages :letter-for-mother :photo-with-mom]}
-     #tg/message-text [:orn [:son [:re "(?iu)сына"]]
-                       [:daugther [:re "(?iu)дочери"]]]]
+     #tg/message-text-0 [:orn [:son [:re "(?iu)сына"]]
+                         [:daugther [:re "(?iu)дочери"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -220,13 +220,14 @@
       :messages #ref [:messages :letter-for-mother :what-mom-cooked]}
      [:map
       [:message
-       [:or
-        [:map [:text
-               [:and :string
-                [:orn
-                 [nil
-                  [:= #ref [:messages :letter-for-mother :no-photo-text]]]]]]]
-        [:map [:photo :string]]]]]]
+       [:orn
+        [[:text 0]
+         [:map [:text
+                [:and :string
+                 [:orn
+                  [nil
+                   [:= #ref [:messages :letter-for-mother :no-photo-text]]]]]]]]
+        [[:photo] [:map [:photo :string]]]]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -236,7 +237,7 @@
    [:orn
     [{:to       [:letter-for-mother :have-children?]
       :messages #ref [:messages :letter-for-mother :have-children?]}
-     #tg/message-text
+     #tg/message-text-0
      [:orn
       [nil
        [:= #ref [:messages :letter-for-mother :cooked-nothing]]]
@@ -250,8 +251,8 @@
    [:orn
     [{:to       [:letter-for-mother :childhood-memories]
       :messages #ref [:messages :letter-for-mother :childhood-memories]}
-     #tg/message-text [:orn [true [:re "^(?iu)да$"]]
-                       [false [:re "^(?iu)нет$"]]]]
+     #tg/message-text-0 [:orn [true [:re "^(?iu)да$"]]
+                         [false [:re "^(?iu)нет$"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -271,8 +272,8 @@
    [:orn
     [{:to       [:letter-for-mother :signature]
       :messages #ref [:messages :letter-for-mother :signature]}
-     #tg/message-text [:orn [true [:re "^(?iu)да$"]]
-                       [false [:re "^(?iu)нет$"]]]]
+     #tg/message-text-0 [:orn [true [:re "^(?iu)да$"]]
+                         [false [:re "^(?iu)нет$"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -292,7 +293,7 @@
    [:orn
     [{:to       [:letter-for-mother :payment]
       :messages #ref [:messages :letter-for-mother :payment]}
-     #tg/message-text [:re "^(?ui)всё окей!$"]]
+     #tg/message-text-0 [:orn [:ok [:re "^(?ui)всё окей!$"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
@@ -304,13 +305,17 @@
       :messages    [{:method "answerPreCheckoutQuery"
                      :ok     true}]}
      [:map [:pre_checkout_query
-            [:map [:invoice_payload
-                   [:and :string [:= ":letter-for-mother"]]]]]]]
+            [:orn
+             [[:invoice_payload]
+              [:map [:invoice_payload
+                     [:and :string [:= ":letter-for-mother"]]]]]]]]]
     [{:to       :start
       :messages [{:text "Открытку выслали голубями. А пока можете намутить ещё одну."}]}
      [:map [:message
-            [:map [:successful_payment
-                   [:map [:invoice_payload
-                          [:and :string [:= ":letter-for-mother"]]]]]]]]]
+            [:orn
+             [[:successful_payment :invoice_payload]
+              [:map [:successful_payment
+                     [:map [:invoice_payload
+                            [:and :string [:= ":letter-for-mother"]]]]]]]]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}}}
