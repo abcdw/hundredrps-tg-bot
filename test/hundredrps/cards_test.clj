@@ -34,3 +34,23 @@
                       updates)
                      (get-in [:state :values]))]
       (is (= values-00 values)))))
+
+(def data-for-pdf
+  {:letter-for-mother
+   {:childhood-memories "Childhood memories here",
+    :what-mom-cooked    nil,
+    :payment            ":letter-for-mother",
+    :maybe-edit         :ok,
+    :signature          "Best regards",
+    :add-warm-memories? true,
+    :photo-with-mom     nil,
+    :sibling            :son,
+    :have-children?     false,
+    :greeting           :understood,
+    :live-together?     true},
+   nil    "/start",
+   :start "/letterForMother"})
+
+(deftest values->pdf-data
+  (testing "Conversion of values to data suitable for pdf."
+    (is (= data-for-pdf (sut/values->pdf-data values-00)))))

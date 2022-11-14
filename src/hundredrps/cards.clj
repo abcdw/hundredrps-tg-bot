@@ -41,6 +41,13 @@
 
 ;; https://github.com/metosin/malli#built-in-schemas
 
+(defn values->pdf-data
+  "Generates data for pdf from values extracted from tg updates."
+  [values]
+  (reduce (fn [acc [msg-id {:keys [step value]}]]
+            (assoc-in acc step value))
+          {} values))
+
 (defn update-state-value
   [old-value parsed-upd & [step]]
   (let [[path payload] (tg/get-payload parsed-upd)]
