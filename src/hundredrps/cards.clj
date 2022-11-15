@@ -137,25 +137,31 @@
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
   [{:keys [api-token db silent? verbose?]}]
-  (fn [{:keys [body] :as request}]
-    (let [input (j/read-value body j/keyword-keys-object-mapper)
+  (let [stats (atom {:request-count 0})]
+    (fn [{:keys [body] :as request}]
+      (let [input (j/read-value body j/keyword-keys-object-mapper)
 
-          chat-id (tg/get-chat-id input)
+            chat-id (tg/get-chat-id #p input)
 
-          logic (get-in @db [:logic])
+            logic (get-in @db [:logic])
 
-          {:keys [state] :as result}
-          (process-update (get-in @db [chat-id :state] {}) logic input)
+            {:keys [state] :as result}
+            (process-update (get-in @db [chat-id :state] {}) logic input)
 
-          replies (map #(assoc % :chat_id chat-id) (:replies result))
-          _ (swap! db assoc-in [chat-id :state] state)]
+            replies (map #(assoc % :chat_id chat-id) (:replies result))
+            _       (swap! db assoc-in [chat-id :state] state)]
 
-      (println "chat-id ================> " chat-id)
-      ;; (println "replies=> " replies)
+        ;; (println "update-id ================> " (:update_id input))
+        ;; (swap! stats update :request-count inc)
+        ;; (println (:request-count @stats))
+        ;; (clojure.pprint/pprint input)
+        ;; (clojure.pprint/pprint replies)
 
-      (if-not silent?
-        (if (and (= 1 (count replies)) (not verbose?))
-          (msg->http-response (first replies))
-          (do
-            (doall (map #(deref (async-call api-token %)) replies))
-            {:status 200}))))))
+
+        (if-not silent?
+          (if (and (= 1 (count replies)) (not verbose?))
+            (msg->http-response (first replies))
+            (do
+              ;; (Thread/sleep (rand-int 100))
+              (doall (map #(deref (async-call api-token %)) replies))
+              {:status 200})))))))
