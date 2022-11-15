@@ -1,8 +1,9 @@
 (ns hundredrps.cards
-  (:require [hundredrps.tg :as tg]
-            [org.httpkit.client :as http]
-            [jsonista.core :as j]
-            [malli.core :as m]))
+  (:require
+   [clojure.java.io :as io]
+   [hundredrps.tg :as tg]
+   [jsonista.core :as j]
+   [org.httpkit.client :as http]))
 
 (defn map->json-http-request
   "Convert map to json, and then wrap in ring form so it can be used in
@@ -40,6 +41,29 @@
      :photo        (tg/get-photo-file-id message)}))
 
 ;; https://github.com/metosin/malli#built-in-schemas
+
+(defn input-stream->byte-array
+  [x]
+  (with-open [xin  x
+              xout (java.io.ByteArrayOutputStream.)]
+    (io/copy xin xout)
+    (.toByteArray xout)))
+
+(defn get-file [api-token file-id]
+  "Takes `api-token` and `file-id` and return promise, which should
+  deliver `ByteArray`."
+  (future
+    (->
+     (async-call api-token {:method  "getFile" :file_id file-id})
+     deref
+     :body (j/read-value j/keyword-keys-object-mapper)
+     :result :file_path
+
+     (#(str "https://api.telegram.org/file/bot" api-token "/" %))
+     (http/get)
+     deref
+     :body
+     input-stream->byte-array)))
 
 (defn values->pdf-data
   "Generates data for pdf from values extracted from tg updates."
