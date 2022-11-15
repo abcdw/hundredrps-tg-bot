@@ -76,6 +76,8 @@
          (global-menu upd)
          (transitions upd))
 
+        parsed-correctly? (vector? (tg/get-payload parsed-upd))
+
         mapper-ctx  {:state state
                      :upd   upd
                      :parsed-upd parsed-upd}
@@ -87,32 +89,37 @@
                                % data-mapper)
                        %)]
 
-    (cond-> state
-      edited-message
-      (assoc :replies
-             [(if result
-                (tg/send-text-message
-                 (tg/get-chat-id upd)
-                 "Мы поредактировали чё вы хотели.")
-                (tg/send-text-message
-                 (tg/get-chat-id upd)
-                 "Сорян, попробуй ещё раз."))])
+    (if parsed-correctly?
+      (cond-> state
+        edited-message
+        (assoc :replies
+               [(if result
+                  (tg/send-text-message
+                   (tg/get-chat-id upd)
+                   "Мы поредактировали чё вы хотели.")
+                  (tg/send-text-message
+                   (tg/get-chat-id upd)
+                   "Сорян, попробуй ещё раз."))])
 
-      (not edited-message)
-      (assoc :replies
-             (if (:messages result)
-               (msg-updater (:messages result))
-               [(tg/send-text-message
-                 (tg/get-chat-id upd)
-                 (with-out-str
-                   (clojure.pprint/pprint result)))]))
+        (not edited-message)
+        (assoc :replies
+               (if (:messages result)
+                 (msg-updater (:messages result))
+                 [(tg/send-text-message
+                   (tg/get-chat-id upd)
+                   (with-out-str
+                     (clojure.pprint/pprint result)))]))
 
-      (and result (contains? result :to) (not edited-message))
-      (assoc :step (:to result))
+        (and result (contains? result :to) (not edited-message))
+        (assoc :step (:to result))
 
-      (and result (tg/get-message-id upd))
-      (update-in [:values (tg/get-message-id upd)]
-                 update-state-value parsed-upd step))))
+        (and result (tg/get-message-id upd))
+        (update-in [:values (tg/get-message-id upd)]
+                   update-state-value parsed-upd step))
+
+      (do
+        (println "parsed incorrectly")
+        state))))
 
 (defn process-update
   [state logic upd]
