@@ -22,10 +22,10 @@
       map->json-http-request
       (assoc  :status 200)))
 
-(defn async-call [api-token x & [callback]]
+(defn async-call [api-url x & [callback]]
   (let [{:keys [method] :or {method "sendMessage"}} x
 
-        url (str "https://api.telegram.org/bot" api-token "/" method)
+        url (str api-url "/" method)
         request (-> x (dissoc :method) map->json-http-request)]
     (http/post url request callback)))
 
@@ -49,17 +49,17 @@
     (io/copy xin xout)
     (.toByteArray xout)))
 
-(defn get-file [api-token file-id]
-  "Takes `api-token` and `file-id` and return promise, which should
+(defn get-file [{:keys [api-url file-url]} file-id]
+  "Takes `api-url` and `file-id` and return promise, which should
   deliver `ByteArray`."
   (future
     (->
-     (async-call api-token {:method  "getFile" :file_id file-id})
+     (async-call api-url {:method  "getFile" :file_id file-id})
      deref
      :body (j/read-value j/keyword-keys-object-mapper)
      :result :file_path
 
-     (#(str "https://api.telegram.org/file/bot" api-token "/" %))
+     (#(str file-url "/" %))
      (http/get)
      deref
      :body
@@ -159,7 +159,7 @@
   `silent?` control if handler send messages at all it useful to setup
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
-  [{:keys [api-token db silent? verbose?]}]
+  [{:keys [api-url file-url db silent? verbose?]}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]
       (let [input (j/read-value body j/keyword-keys-object-mapper)
@@ -186,5 +186,5 @@
             (msg->http-response (first replies))
             (do
               (future
-                (doall (map #(deref (async-call api-token %)) replies)))
+                (doall (map #(deref (async-call api-url %)) replies)))
               {:status 200})))))))

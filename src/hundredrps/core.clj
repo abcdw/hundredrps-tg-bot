@@ -51,8 +51,10 @@
 
 
 (defmethod ig/init-key :tg/api-token [_ val] val)
-(defmethod ig/init-key :tg/api-url [_ val] val)
-(defmethod ig/init-key :tg/file-url [_ val] val)
+(defmethod ig/init-key :tg/api-url [_ {:keys [base-url api-token]}]
+  (str base-url api-token))
+(defmethod ig/init-key :tg/file-url [_ {:keys [base-url api-token]}]
+  (str base-url api-token))
 
 (defmethod ig/init-key :http/server [_ {:keys [handler] :as opts}]
   (http-kit/run-server handler (-> opts
@@ -64,7 +66,7 @@
 
 (defmethod ig/init-key :db/value [_ val] (atom val))
 
-(defmethod ig/init-key :handler/webhook [_ {:keys [api-token db] :as ctx}]
+(defmethod ig/init-key :handler/webhook [_ {:keys [api-url file-url db] :as ctx}]
   (cards/get-handler ctx))
 
 (defn get-config
