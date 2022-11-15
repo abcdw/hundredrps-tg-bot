@@ -37,7 +37,7 @@
                 :file_id
                 "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADeAADKwQ",
                 :height         533}},
-   852 {:step [:letter-for-mother :what-mom-cooked], :value :text},
+   852 {:step [:letter-for-mother :what-mom-cooked], :value "ho"},
    854 {:step [:letter-for-mother :have-children?], :value false},
    856 {:step [:letter-for-mother :childhood-memories],
         :value "childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much, almost 300 hundreds."},

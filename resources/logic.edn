@@ -244,11 +244,9 @@
    [:orn
     [{:to       [:letter-for-mother :have-children?]
       :messages #ref [:messages :letter-for-mother :have-children?]}
-     #tg/message-text-0
-     [:orn
-      [nil
-       [:= #ref [:messages :letter-for-mother :cooked-nothing]]]
-      [:text [:re "^.{1,300}$"]]]]
+     #tg/message-maybe-text
+     [[:= #ref [:messages :letter-for-mother :cooked-nothing]]
+      [:re "^.{1,300}$"]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 

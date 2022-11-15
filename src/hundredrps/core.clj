@@ -35,6 +35,16 @@
   [_ tag value]
   [:map [:message [:orn [[:text 0] [:map [:text [:and :string value]]]]]]])
 
+(defmethod aero/reader 'tg/message-maybe-text
+  [_ tag [maybe text]]
+  [:map [:message
+         [:orn
+          [[:text 0]
+           [:map [:text [:and :string
+                         [:orn [nil maybe]]]]]]
+          [[:text]
+           [:map [:text [:and :string text]]]]]]])
+
 (defmethod aero/reader 'cost->amount
   [_ tag value]
   (* 100 value))
