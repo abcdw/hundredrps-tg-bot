@@ -161,6 +161,6 @@
           (if (and (= 1 (count replies)) (not verbose?))
             (msg->http-response (first replies))
             (do
-              ;; (Thread/sleep (rand-int 100))
-              (doall (map #(deref (async-call api-token %)) replies))
+              (future
+                (doall (map #(deref (async-call api-token %)) replies)))
               {:status 200})))))))
