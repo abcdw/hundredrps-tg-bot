@@ -76,7 +76,7 @@
          (global-menu upd)
          (transitions upd))
 
-        parsed-correctly? (vector? (tg/get-payload parsed-upd))
+        values-extracted? (vector? (tg/get-payload parsed-upd))
 
         mapper-ctx  {:state state
                      :upd   upd
@@ -89,7 +89,7 @@
                                % data-mapper)
                        %)]
 
-    (if parsed-correctly?
+    (if values-extracted?
       (cond-> state
         edited-message
         (assoc :replies
@@ -118,8 +118,8 @@
                    update-state-value parsed-upd step))
 
       (do
-        (println "parsed incorrectly")
-        state))))
+        (println "Values not extracted")
+        (assoc state :replies (get-in logic [:messages :wrong-input]))))))
 
 (defn process-update
   [state logic upd]
