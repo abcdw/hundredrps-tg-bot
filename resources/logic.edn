@@ -129,7 +129,8 @@
   [:message
    [:orn
     [[:text] [:map [:text :string]]]
-    [[:photo] [:map [:photo :string]]]]]]
+    [[:photo] [:map [:photo [:vector :map]]]]]]]
+
  :transitions
  {:start
   [{:id       :start
@@ -218,8 +219,7 @@
      [:map]]]}
 
   [:letter-for-mother :photo-with-mom]
-  {:data-path [:photo]
-   :transitions
+  {:transitions
    #m/parser
    [:orn
     [{:to       [:letter-for-mother :what-mom-cooked]
@@ -233,7 +233,8 @@
                  [:orn
                   [nil
                    [:= #ref [:messages :letter-for-mother :no-photo-text]]]]]]]]
-        [[:photo] [:map [:photo :string]]]]]]]
+        [[:photo 2]
+         [:map [:photo [:vector :map]]]]]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
