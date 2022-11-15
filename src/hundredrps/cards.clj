@@ -107,8 +107,7 @@
                  (msg-updater (:messages result))
                  [(tg/send-text-message
                    (tg/get-chat-id upd)
-                   (with-out-str
-                     (clojure.pprint/pprint result)))]))
+                   (with-out-str (println result)))]))
 
         (and result (contains? result :to) (not edited-message))
         (assoc :step (:to result))
