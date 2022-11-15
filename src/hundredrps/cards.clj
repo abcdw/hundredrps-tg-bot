@@ -114,11 +114,7 @@
 
 (defn process-update
   [state logic upd]
-  (let [chat-id      (tg/get-chat-id upd)
-        message-type (tg/get-message-type upd)
-        message-id   (tg/get-message-id upd)
-
-        new-state (-> state
+  (let [new-state (-> state
                       (update :updates #(if % (conj % upd) [upd]))
                       (try-to-make-step logic upd))
 
