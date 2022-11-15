@@ -40,7 +40,9 @@
   (* 100 value))
 
 
-(defmethod ig/init-key :tg/token [_ val] val)
+(defmethod ig/init-key :tg/api-token [_ val] val)
+(defmethod ig/init-key :tg/api-url [_ val] val)
+(defmethod ig/init-key :tg/file-url [_ val] val)
 
 (defmethod ig/init-key :http/server [_ {:keys [handler] :as opts}]
   (http-kit/run-server handler (-> opts
