@@ -124,6 +124,12 @@
      :currency       "RUB"
      :prices         [{:label "«Письмо маме»" :amount #cost->amount #ref [:card-cost]}]}]}}
 
+ :wildcard-pattern
+ [:map
+  [:message
+   [:orn
+    [[:text] [:map [:text :string]]]
+    [[:photo] [:map [:photo :string]]]]]]
  :transitions
  {:start
   [{:id       :start
@@ -168,7 +174,7 @@
    #m/parser
    [:orn
     [{:messages #ref [:messages :press-start]}
-     [:map]]]}
+     #ref [:wildcard-pattern]]]}
 
   [:start]
   {:transitions
