@@ -46,7 +46,9 @@
   [values]
   (reduce (fn [acc [msg-id {:keys [step value]}]]
             (assoc-in acc step value))
-          {} values))
+          ;; Sort is needed to make sure that messages with lower id
+          ;; processed earlier
+          {} (sort values)))
 
 (defn update-state-value
   [old-value parsed-upd & [step]]
