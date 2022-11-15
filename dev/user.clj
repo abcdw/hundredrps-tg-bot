@@ -5,7 +5,8 @@
    [hundredrps.core :refer [get-config]]
    [integrant.repl]
    [jsonista.core :as j]
-   [org.httpkit.client :as http]))
+   [org.httpkit.client :as http]
+   [clojure.pprint]))
 
 (integrant.repl/set-prep! #(get-config))
 
@@ -25,7 +26,7 @@
 
 (defn pass-letter-for-mother
   []
-  (-> "assets/00-letter-for-mother.edn"
+  (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
       io/resource io/file slurp read-string
       emulate-requests))
 
@@ -55,8 +56,18 @@
              (assoc-in [:pre_checkout_query :from :id] new-id))
           updates)))
 
+(defn reset []
+  (integrant.repl/reset)
+  (pass-letter-for-mother))
+
+(defn persist-updates [file]
+  (spit (io/resource file)
+        (with-out-str
+          (clojure.pprint/pprint
+           (get-in (get-db) [67562087 :state :updates])))))
 
 (comment
+  (persist-updates "assets/01-letter-for-mother-with-photos-and-errors.edn")
   (let [series-count 50]
     (dotimes [n 40]
       (Thread/sleep 500)
