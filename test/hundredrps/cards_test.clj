@@ -6,7 +6,8 @@
    [hundredrps.core]))
 
 (def values-00
-  {675 {:step nil, :value "/start"},
+  {670 {:step nil, :value "hi"},
+   675 {:step nil, :value "/start"},
    680 {:step [:start], :value "/letterForMother"},
    684 {:step [:letter-for-mother :greeting], :value :understood},
    686 {:step [:letter-for-mother :live-together?], :value true},
