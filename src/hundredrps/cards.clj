@@ -49,7 +49,7 @@
     (io/copy xin xout)
     (.toByteArray xout)))
 
-(defn get-file [{:keys [api-url file-url]} file-id]
+(defn get-file [{:tg/keys [api-url file-url]} file-id]
   "Takes `api-url` and `file-id` and return promise, which should
   deliver `ByteArray`."
   (future
@@ -159,7 +159,8 @@
   `silent?` control if handler send messages at all it useful to setup
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
-  [{:keys [api-url file-url db silent? verbose?]}]
+  [{:keys [db silent? verbose?]
+    :tg/keys [api-url file-url]}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]
       (let [input (j/read-value body j/keyword-keys-object-mapper)

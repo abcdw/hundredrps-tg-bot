@@ -1,8 +1,8 @@
 {:http/server     {:port    #long #or [#env PORT 8080]
                    :handler #ig/ref :handler/webhook}
- :handler/webhook {:api-url  #ig/ref :tg/api-url
-                   :file-url #ig/ref :tg/file-url
-                   :db       #ig/ref :db/value}
+ :handler/webhook {:tg/api-url  #ig/ref :tg/api-url
+                   :tg/file-url #ig/ref :tg/file-url
+                   :db          #ig/ref :db/value}
  :tg/api-token    #env TELEGRAM_TOKEN
  :tg/api-url      {:base-url  "https://api.telegram.org/bot"
                    :api-token #ig/ref :tg/api-token}
