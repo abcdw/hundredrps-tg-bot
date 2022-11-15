@@ -67,9 +67,11 @@
 
 (defn values->pdf-data
   "Generates data for pdf from values extracted from tg updates."
-  [values]
+  [ctx values]
   (reduce (fn [acc [msg-id {:keys [step value]}]]
-            (assoc-in acc step value))
+            (assoc-in acc step (if (tg/file? value)
+                                 (get-file ctx (:file_id value))
+                                 value)))
           ;; Sort is needed to make sure that messages with lower id
           ;; processed earlier
           {} (sort values)))
