@@ -36,6 +36,12 @@
   [upd]
   (-> upd get-payload :message_id))
 
+(defn file?
+  "Checks if `x` is a telegram File object."
+  [x]
+  (and (map? x)
+       (contains? x :file_id)))
+
 
 ;;; tg api
 
