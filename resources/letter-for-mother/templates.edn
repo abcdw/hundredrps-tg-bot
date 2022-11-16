@@ -1,5 +1,5 @@
 {:hello
- {:pdf [:cards :letter-for-mother :hello.pdf]
+ {:pdf [:pdfs :letter-for-mother :hello.pdf]
   :parts
   [{:type      :text
     :font      [:resources :fonts :kosko-bold.ttf]
@@ -8,14 +8,14 @@
     :position  {:x 70.0 :y 182.0}}]}
 
  :your-story
- {:pdf [:cards :letter-for-mother :your-story.pdf]
+ {:pdf [:pdfs :letter-for-mother :your-story.pdf]
   :parts
   [{:type     :text
     :text     [:data :your-story]
     :position {:x 70.0 :y 256.0}}]}
 
  :photo-portrait
- {:pdf [:cards :letter-for-mother :photo-portrait.pdf]
+ {:pdf [:pdfs :letter-for-mother :photo-portrait.pdf]
   :parts
   [{:type     :text
     :text     [:data :childhood-memories]
