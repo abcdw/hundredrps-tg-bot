@@ -10,6 +10,8 @@
                    :api-token #ig/ref :tg/api-token}
  :db/value        {:logic #include "logic.edn"}
 
- :pdf/resources   {:fonts #pdf/resource-dir "fonts"
-                   :cards {:letter-for-mother
-                           #pdf/resource-dir "cards/letter-for-mother"}}}
+ :pdf/resources {:fonts #pdf/resource-dir "fonts"
+                 :cards {:letter-for-mother
+                         #pdf/resource-dir "cards/letter-for-mother"}}
+
+ :pdf/templates {:letter-for-mother #include "letter-for-mother/templates.edn"}}

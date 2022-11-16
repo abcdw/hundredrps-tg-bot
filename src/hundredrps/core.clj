@@ -83,6 +83,9 @@
 (defmethod ig/init-key :pdf/resources [_ val]
   val)
 
+(defmethod ig/init-key :pdf/templates [_ val]
+  val)
+
 (defmethod ig/init-key :handler/webhook [_ {:keys [api-url file-url db] :as ctx}]
   (cards/get-handler ctx))
 
