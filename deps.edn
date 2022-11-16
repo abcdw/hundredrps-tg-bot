@@ -4,7 +4,7 @@
          integrant/integrant      {:mvn/version "0.8.0"}
          http-kit/http-kit        {:mvn/version "2.6.0"}
          metosin/malli            {:mvn/version "0.9.2"}
-         org.apache.pdfbox/pdfbox {:mvn/version "2.0.21"}}
+         org.apache.pdfbox/pdfbox {:mvn/version "2.0.26"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]
