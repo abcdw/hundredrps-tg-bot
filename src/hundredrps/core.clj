@@ -8,11 +8,19 @@
    [integrant.core :as ig]
    [org.httpkit.client :as http]
    [org.httpkit.server :as http-kit]
-   [malli.core :as m]))
+   [malli.core :as m])
+  (:import java.io.ByteArrayOutputStream))
 
 (defn sum [a b]
   "Can be used for writing a simple test."
   (+ a b))
+
+(defn load-file-as-byte-array
+  [file]
+  (with-open [xin  (io/input-stream file)
+              xout (new ByteArrayOutputStream)]
+    (io/copy xin xout)
+    (.toByteArray xout)))
 
 
 
@@ -49,6 +57,12 @@
   [_ tag value]
   (* 100 value))
 
+(defmethod aero/reader 'pdf/resource-dir
+  [_ tag value]
+  (->> (seq (.listFiles (io/file (io/resource value))))
+       (map (fn [x] [(keyword (.getName x))
+                     (load-file-as-byte-array x)]))
+       (into {})))
 
 (defmethod ig/init-key :tg/api-token [_ val] val)
 (defmethod ig/init-key :tg/api-url [_ {:keys [base-url api-token]}]
@@ -65,6 +79,9 @@
   (http-kit/server-stop! server))
 
 (defmethod ig/init-key :db/value [_ val] (atom val))
+
+(defmethod ig/init-key :pdf/resources [_ val]
+  val)
 
 (defmethod ig/init-key :handler/webhook [_ {:keys [api-url file-url db] :as ctx}]
   (cards/get-handler ctx))

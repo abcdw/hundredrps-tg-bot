@@ -8,4 +8,8 @@
                    :api-token #ig/ref :tg/api-token}
  :tg/file-url     {:base-url  "https://api.telegram.org/file/bot"
                    :api-token #ig/ref :tg/api-token}
- :db/value        {:logic #include "logic.edn"}}
+ :db/value        {:logic #include "logic.edn"}
+
+ :pdf/resources   {:fonts #pdf/resource-dir "fonts"
+                   :cards {:letter-for-mother
+                           #pdf/resource-dir "cards/letter-for-mother"}}}
