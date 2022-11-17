@@ -76,6 +76,29 @@
       (.newLineAtOffset page-cs 0 (* (+ font-size horizontal-spacing) -1)))
     (.endText page-cs)))
 
+(defmethod add-pdf-part! :signature
+  [{:keys [page-cs page]
+    :as   ctx}
+   {:keys [text position font font-size color]
+    :or   {font      [:fonts :kosko-bold.ttf]
+           font-size 21}
+    :as   action}]
+  (let [text           (get-obj ctx text)
+        font           (get-font ctx font)
+        pdf-width      (.getWidth (.getMediaBox page))
+        text-insert    (* (:x position 0) 2)
+        max-text-width (- pdf-width text-insert)
+        text-width     (* (/ (.getStringWidth font text) 1000) font-size)
+        y              (:y position 0)
+        x              (+ (:x position 0) (max 0 (- max-text-width text-width)))]
+
+    (.beginText page-cs)
+    (.setFont page-cs font font-size)
+    (when color (.setNonStrokingColor page-cs (get-color ctx color)))
+    (.newLineAtOffset page-cs x y)
+    (.drawString page-cs text)
+    (.endText page-cs)))
+
 (defmethod add-pdf-part! :image
   [{:keys [page-cs document]
     :as   ctx}
@@ -118,6 +141,7 @@
         (add-pdf-part!
          (merge ctx
                 {:document doc
+                 :page     page
                  :page-cs  page-cs})
          part)))
     doc))
