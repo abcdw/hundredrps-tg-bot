@@ -167,7 +167,7 @@
     (fn [{:keys [body] :as request}]
       (let [input (j/read-value body j/keyword-keys-object-mapper)
 
-            chat-id (tg/get-chat-id #p input)
+            chat-id (tg/get-chat-id input)
 
             logic (get-in @db [:logic])
 
