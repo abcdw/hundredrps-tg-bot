@@ -1,5 +1,6 @@
 (ns hundredrps.pdf
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [hundredrps.text :as text])
   (:import
    java.io.ByteArrayOutputStream
    java.awt.Color
@@ -135,9 +136,10 @@
                 buffer    (new ByteArrayOutputStream)]
 
       (doseq [template (vals (-> system :pdf/templates card))
-              :let [resources (get-resources system card)]]
+              :let     [resources (get-resources system card)]]
         (with-open [page (create-document
-                          {:data      form-data
+                          {:data      data
+                           :texts     (text/get-texts system data card)
                            :resources resources}
                           #p template)]
 
