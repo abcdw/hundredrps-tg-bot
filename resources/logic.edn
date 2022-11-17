@@ -214,7 +214,7 @@
     [{:to       [:letter-for-mother :photo-with-mom]
       :messages #ref [:messages :letter-for-mother :photo-with-mom]}
      #tg/message-text-0 [:orn [:son [:re "(?iu)сына"]]
-                         [:daugther [:re "(?iu)дочери"]]]]
+                         [:daughter [:re "(?iu)дочери"]]]]
     [{:messages #ref [:messages :wrong-input]}
      [:map]]]}
 
