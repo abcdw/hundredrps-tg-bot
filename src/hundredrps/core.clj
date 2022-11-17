@@ -50,12 +50,17 @@
   [_ tag value]
   (* 100 value))
 
-(defmethod aero/reader 'pdf/resource-dir
-  [_ tag value]
-  (->> (seq (.listFiles (io/file (io/resource value))))
+(defn load-files-from-dir
+  "Load files into memory as byte-arrays."
+  [dir]
+  (->> (seq (.listFiles (io/file (io/resource dir))))
        (map (fn [x] [(keyword (.getName x))
                      (utils/load-file-as-byte-array x)]))
        (into {})))
+
+(defmethod aero/reader 'cards/resource-dir
+  [_ tag value]
+  (load-files-from-dir value))
 
 (defmethod ig/init-key :tg/api-token [_ val] val)
 (defmethod ig/init-key :tg/api-url [_ {:keys [base-url api-token]}]
@@ -73,7 +78,7 @@
 
 (defmethod ig/init-key :db/value [_ val] (atom val))
 
-(defmethod ig/init-key :pdf/resources [_ val]
+(defmethod ig/init-key :cards/resources [_ val]
   val)
 
 (defmethod ig/init-key :pdf/templates [_ val]

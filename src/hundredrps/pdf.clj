@@ -33,11 +33,11 @@
     x))
 
 (defn get-font
-  [{:keys [document] :as ctx} x]
+  [{:keys [document resources] :as ctx} x]
   (let [obj (get-obj ctx x)]
     (if (instance? PDFont x)
       x
-      (as-> (get-obj ctx x) t
+      (as-> (get-obj resources x) t
         (io/input-stream t)
         (. PDType0Font load document t false)))))
 
@@ -50,7 +50,7 @@
    {:keys [text position fill-column horizontal-spacing font font-size color]
     :or   {fill-column        45
            horizontal-spacing 4.0
-           font               [:resources :fonts :kosko-bold.ttf]
+           font               [:fonts :kosko-bold.ttf]
            font-size          21}
     :as   action}]
 
@@ -113,20 +113,27 @@
          part)))
     doc))
 
+(defn get-resources
+ [system card]
+ (let [all-resources (:cards/resources system)
+       pdfs (get-in all-resources [:pdfs card])]
+   (-> all-resources
+       (select-keys [:fonts])
+       (assoc :pdfs pdfs))))
+
 (defn gen-pdf
-  []
+  [system data card]
   (let [merger (new PDFMergerUtility)]
     (with-open [final-doc (new PDDocument)
                 buffer    (new ByteArrayOutputStream)]
 
-      (doseq [template (vals (-> integrant.repl.state/system
-                                 :pdf/templates
-                                 :letter-for-mother))]
+      (doseq [template (vals (-> system :pdf/templates card))
+              :let [resources (get-resources system card)]]
         (with-open [page (create-document
-                          {:data form-data
-                           :resources
-                           (:pdf/resources integrant.repl.state/system)}
-                          template)]
+                          {:data      form-data
+                           :resources resources}
+                          #p template)]
+
           (. merger appendDocument final-doc page)))
 
       (.save final-doc buffer)
@@ -134,4 +141,4 @@
       ;; TODO Return bytearray
       (.writeTo buffer (io/output-stream (io/file "new.pdf"))))))
 
-;; (gen-pdf)
+;; (gen-pdf integrant.repl.state/system form-data :letter-for-mother)
