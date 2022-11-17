@@ -91,7 +91,7 @@
    :maybe-edit         :ok,
    :signature          "Best regards",
    :add-warm-memories? true,
-   :photo-with-mom     (hundredrps.core/load-file-as-byte-array
+   :photo-with-mom     (hundredrps.utils/load-file-as-byte-array
                         (io/file (io/resource "face.jpg"))),
    :sibling            :son,
    :have-children?     false,
