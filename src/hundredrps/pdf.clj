@@ -1,6 +1,7 @@
 (ns hundredrps.pdf
   (:require [clojure.java.io :as io]
-            [hundredrps.text :as text])
+            [hundredrps.text :as text]
+            [malli.core :as m])
   (:import
    java.io.ByteArrayOutputStream
    java.awt.Color
@@ -129,19 +130,31 @@
        (select-keys [:fonts])
        (assoc :pdfs pdfs))))
 
+(defn get-matched-card-parts
+  "Return template names for mached rules."
+  [data card-rules]
+  (->>
+   (filter (fn [[pattern value]]
+             (when (m/validate pattern data) value)) card-rules)
+   (map second)))
+
 (defn gen-pdf
   [system data card]
-  (let [merger (new PDFMergerUtility)]
+  (let [merger        (new PDFMergerUtility)
+        card-rules    (-> system :pdf/cards card)
+        resources     (get-resources system card)
+        pdf-templates (-> system :pdf/templates card)
+        card-parts    (get-matched-card-parts data card-rules)
+        templates     (map pdf-templates card-parts)]
     (with-open [final-doc (new PDDocument)
                 buffer    (new ByteArrayOutputStream)]
 
-      (doseq [template (vals (-> system :pdf/templates card))
-              :let     [resources (get-resources system card)]]
+      (doseq [template templates]
         (with-open [page (create-document
                           {:data      data
                            :texts     (text/get-texts system data card)
                            :resources resources}
-                          #p template)]
+                          template)]
 
           (. merger appendDocument final-doc page)))
 
