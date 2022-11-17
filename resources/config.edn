@@ -18,4 +18,6 @@
  :text/templates
  {:letter-for-mother #include "cards/letter-for-mother/texts.edn"}
  :pdf/templates
- {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"}}
+ {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"}
+ :pdf/cards
+ {:letter-for-mother #include "cards/letter-for-mother/card.edn"}}
