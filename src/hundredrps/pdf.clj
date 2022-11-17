@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io])
   (:import
    java.io.ByteArrayOutputStream
+   java.awt.Color
 
    org.apache.pdfbox.pdmodel.PDDocument
    org.apache.pdfbox.pdmodel.PDPage
@@ -41,6 +42,12 @@
         (io/input-stream t)
         (. PDType0Font load document t false)))))
 
+(defn get-color
+  [ctx [r g b :as x]]
+  (if (vector? x)
+    (new Color r g b)
+    x))
+
 (defmulti add-pdf-part!
   (fn [p x] (:type x)))
 
@@ -59,7 +66,7 @@
   (let [wrapped-text (wrap-line (get-obj ctx text) fill-column)]
     (.beginText page-cs)
     (.setFont page-cs (get-font ctx font) font-size)
-    (when color (.setNonStrokingColor page-cs color))
+    (when color (.setNonStrokingColor page-cs (get-color ctx color)))
     (.newLineAtOffset page-cs (:x position 0) (:y position 0))
     (doseq [index (range (count wrapped-text))
             :let  [line (get wrapped-text index)]]
