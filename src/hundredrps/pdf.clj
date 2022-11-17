@@ -159,8 +159,33 @@
           (. merger appendDocument final-doc page)))
 
       (.save final-doc buffer)
+      (.toByteArray buffer))))
 
-      ;; TODO Return bytearray
-      (.writeTo buffer (io/output-stream (io/file "new.pdf"))))))
 
+(def face-photo
+   (hundredrps.utils/load-file-as-byte-array
+    (io/file (io/resource "face.jpg"))))
+
+(defn generate-test-pdfs
+  []
+  (for [sibling   [:daughter :son]
+        together? [true false]
+        photo     [nil face-photo]
+        vertical? [true false]
+        :let      [file-name (str "target/pdfs/"
+                                  (if together? "together" "separate") "-"
+                                  (name sibling) "-"
+                                  (if photo "photo" "no-photo") "-"
+                                  (if vertical? "vertical" "landscape")
+                                  ".pdf")
+                   data (merge form-data
+                               {:sibling        sibling
+                                :live-together? together?
+                                :photo-with-mom photo
+                                :vertical?      vertical?})
+                   system integrant.repl.state/system
+                   pdf-bytes (gen-pdf system  data :letter-for-mother)]]
+    (.write (io/output-stream (io/file file-name)) pdf-bytes)))
+
+;; (generate-test-pdfs)
 ;; (gen-pdf integrant.repl.state/system form-data :letter-for-mother)
