@@ -243,3 +243,56 @@
 
 ;; (generate-test-pdfs)
 ;; (generate-pdf integrant.repl.state/system form-data :letter-for-mother)
+
+(def form-data-best-woman
+  {:mother-name        "мамочка",
+   :sibling            :son,
+   :what-mom-cooked    "блинах и печенье",
+   :mom-consists-of    "невероятное терпение и теплые объятия",
+   :mom-consists-of-right-part "невероятное терпение",
+   :mom-consists-of-left-part "теплые объятия",
+   :ability            "умеешь сопереживать",
+   :signature          "Best regards",
+   :honor?             false,
+   :is-mom-always-right? true,
+   :payment            ":best-woman",
+   :abuse?              false,
+   :maybe-edit         :ok,
+   :photo-with-mom     (hundredrps.utils/load-file-as-byte-array
+                           (io/file (io/resource "face.jpg"))),
+   :vertical?          false})
+
+
+(defn generate-tests-best-for-woman-pdfs
+  []
+  (for [sibling   [:daughter :son]
+        what-mom-cooked ["блинах и печенье" ""]
+        photo     [nil face-photo]
+        vertical? [true false]
+        is-mom-always-right? [true false]
+        abuse?   [true false]
+        :let      [file-name (str "target/pdfs/bestwoman-"
+                                  (if what-mom-cooked "cooked" "not-cooked") "-"
+                                  (name sibling) "-"
+                                  (if photo "photo" "no-photo") "-"
+                                  (if is-mom-always-right? "mom-always-right" "not-always-right") "-"
+                                  (if abuse? "abuse" "not-abuse") "-"
+                                  (if vertical? "vertical" "landscape")
+                                  ".pdf")
+                   data (merge form-data-best-woman
+                               {:sibling        sibling
+                                :what-mom-cooked what-mom-cooked
+                                :photo-with-mom photo
+                                :vertical?      vertical?
+                                :is-mom-always-right? is-mom-always-right?
+                                :abuse? abuse?})
+                   system integrant.repl.state/system
+                   pdf-bytes (generate-pdf system  data :best-woman)]]
+    (.write (io/output-stream (io/file file-name)) pdf-bytes)))
+
+
+;; (generate-pdf integrant.repl.state/system form-data-best-woman :best-woman)
+
+;; (.write (io/output-stream (io/file "best-woman-test.pdf"))
+;;  (generate-pdf integrant.repl.state/system form-data-best-woman :best-woman))
+;; (generate-tests-best-for-woman-pdfs)
