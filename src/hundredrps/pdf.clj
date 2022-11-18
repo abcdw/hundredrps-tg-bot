@@ -165,7 +165,7 @@
              (when (m/validate pattern data) value)) card-rules)
    (map second)))
 
-(defn gen-pdf
+(defn generate-pdf
   [system data card]
   (let [merger        (new PDFMergerUtility)
         card-rules    (-> system :pdf/cards card)
@@ -211,9 +211,9 @@
                                 :photo-with-mom photo
                                 :vertical?      vertical?})
                    system integrant.repl.state/system
-                   pdf-bytes (gen-pdf system  data :letter-for-mother)]]
+                   pdf-bytes (generate-pdf system  data :letter-for-mother)]]
     (with-open [os (io/output-stream (io/file file-name))]
       (.write os pdf-bytes))))
 
 ;; (generate-test-pdfs)
-;; (gen-pdf integrant.repl.state/system form-data :letter-for-mother)
+;; (generate-pdf integrant.repl.state/system form-data :letter-for-mother)
