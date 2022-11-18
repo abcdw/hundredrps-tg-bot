@@ -17,12 +17,18 @@
 
  :cards/resources
  {:fonts   #cards/resource-dir "cards/fonts"
-  :pdfs    {:letter-for-mother #cards/resource-dir "cards/letter-for-mother/pdfs"}
-  :strings {:letter-for-mother #include "cards/letter-for-mother/strings.edn"}}
+  :pdfs    {:letter-for-mother #cards/resource-dir "cards/letter-for-mother/pdfs"
+            :best-woman #cards/resource-dir "cards/best-woman/pdfs"}
+  :strings {:letter-for-mother #include "cards/letter-for-mother/strings.edn"
+            :best-woman #include "cards/best-woman/strings.edn"}}
 
  :text/templates
- {:letter-for-mother #include "cards/letter-for-mother/texts.edn"}
+ {:letter-for-mother #include "cards/letter-for-mother/texts.edn"
+  :best-woman #include "cards/best-woman/texts.edn"}
+
  :pdf/templates
- {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"}
+ {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"
+  :best-woman #include "cards/best-woman/pdfs.edn"}
  :pdf/cards
- {:letter-for-mother #include "cards/letter-for-mother/card.edn"}}
+ {:letter-for-mother #include "cards/letter-for-mother/card.edn"
+  :best-woman #include "cards/best-woman/card.edn"}}
