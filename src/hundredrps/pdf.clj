@@ -209,7 +209,8 @@
                                 :vertical?      vertical?})
                    system integrant.repl.state/system
                    pdf-bytes (gen-pdf system  data :letter-for-mother)]]
-    (.write (io/output-stream (io/file file-name)) pdf-bytes)))
+    (with-open [os (io/output-stream (io/file file-name))]
+      (.write os pdf-bytes))))
 
 ;; (generate-test-pdfs)
 ;; (gen-pdf integrant.repl.state/system form-data :letter-for-mother)
