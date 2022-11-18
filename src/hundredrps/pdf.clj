@@ -77,6 +77,32 @@
       (.newLineAtOffset page-cs 0 (* (+ font-size horizontal-spacing) -1)))
     (.endText page-cs)))
 
+(defmethod add-pdf-part! :centered-text
+  [{:keys [page-cs]
+    :as   ctx}
+   {:keys [text position fill-column horizontal-spacing font font-size color]
+    :or   {fill-column        45
+           horizontal-spacing 4.0
+           font               [:fonts :kosko-bold.ttf]
+           font-size          21}
+    :as   action}]
+  (let [wrapped-text (wrap-line (get-obj ctx text) fill-column)
+        maxWidth (reduce max (map #(* (/ (.getStringWidth (get-font ctx font) %) 1000) font-size) wrapped-text))
+        textHeight (* (count wrapped-text) font-size)
+        centerX    (:x position 0)
+        centerY    (:y position 0)
+        x          (- centerX (/ maxWidth 2))
+        y          (+ centerY (/ textHeight 2))]
+    (.beginText page-cs)
+    (.setFont page-cs (get-font ctx font) font-size)
+    (when color (.setNonStrokingColor page-cs (get-color ctx color)))
+    (.newLineAtOffset page-cs x y)
+    (doseq [index (range (count wrapped-text))
+            :let  [line (get wrapped-text index)]]
+      (.drawString page-cs line)
+      (.newLineAtOffset page-cs 0 (* (+ font-size horizontal-spacing) -1)))
+    (.endText page-cs)))
+
 (defmethod add-pdf-part! :signature
   [{:keys [page-cs page]
     :as   ctx}
