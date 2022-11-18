@@ -42,28 +42,18 @@
 
 ;; https://github.com/metosin/malli#built-in-schemas
 
-(defn input-stream->byte-array
-  [x]
-  (with-open [xin  x
-              xout (java.io.ByteArrayOutputStream.)]
-    (io/copy xin xout)
-    (.toByteArray xout)))
-
 (defn get-file [{:tg/keys [api-url file-url]} file-id]
-  "Takes `api-url` and `file-id` and return promise, which should
-  deliver `ByteArray`."
-  (future
-    (->
-     (async-call api-url {:method  "getFile" :file_id file-id})
-     deref
-     :body (j/read-value j/keyword-keys-object-mapper)
-     :result :file_path
+  "Takes `api-url` and `file-id` and return `BufferedInputStream`."
+  (->
+   (async-call api-url {:method "getFile" :file_id file-id})
+   deref
+   :body (j/read-value j/keyword-keys-object-mapper)
+   :result :file_path
 
-     (#(str file-url "/" %))
-     (http/get)
-     deref
-     :body
-     input-stream->byte-array)))
+   (#(str file-url "/" %))
+   (http/get {:as :byte-array})
+   deref
+   :body))
 
 (defn values->pdf-data
   "Generates data for pdf from values extracted from tg updates."

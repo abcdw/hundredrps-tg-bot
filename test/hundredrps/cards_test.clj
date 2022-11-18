@@ -101,7 +101,6 @@
                             io/resource
                             io/file
                             io/input-stream
-                            sut/input-stream->byte-array
                             slurp)
     :sibling            :son,
     :have-children?     false,
@@ -134,8 +133,7 @@
     (with-fake-http [get-file-url {:body get-file-response}
                      photo-url    {:body photo :status 200}]
       (testing "Obtaining image from tg servers."
-        (is (= data-for-pdf-01
-               (->
-                (sut/values->pdf-data ctx values-01)
-                (update-in [:letter-for-mother :photo-with-mom]
-                           #(-> % deref slurp)))))))))
+        (let [prepared-data (-> (sut/values->pdf-data ctx values-01)
+                                (update-in [:letter-for-mother :photo-with-mom]
+                                           slurp))]
+          (is (= data-for-pdf-01 prepared-data)))))))
