@@ -161,14 +161,16 @@
   `silent?` control if handler send messages at all it useful to setup
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
-  [{:keys [db silent? verbose?]
-    :tg/keys [api-url file-url]}]
+  [{:keys    [silent? verbose?]
+    :tg/keys [api-url file-url]
+    :as      ctx}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]
       (let [input (j/read-value body j/keyword-keys-object-mapper)
 
             chat-id (tg/get-chat-id input)
 
+            db    (:db/value ctx)
             logic (get-in @db [:logic])
 
             {:keys [state] :as result}

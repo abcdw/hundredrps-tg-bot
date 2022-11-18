@@ -90,7 +90,7 @@
 (defmethod ig/init-key :text/templates [_ val]
   val)
 
-(defmethod ig/init-key :handler/webhook [_ {:keys [api-url file-url db] :as ctx}]
+(defmethod ig/init-key :handler/webhook [_ ctx]
   (cards/get-handler ctx))
 
 (defn get-config

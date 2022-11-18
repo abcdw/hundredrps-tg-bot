@@ -15,8 +15,8 @@
 
 (defn emulate-requests
   [updates]
-  (let [conf    {:api-token (:tg/token integrant.repl.state/system)
-                 :db        (:db/value integrant.repl.state/system)}
+  (let [conf (select-keys integrant.repl.state/system
+                          (keys (:handler/webhook integrant.repl.state/config)))
 
         verbose-handler (cards/get-handler (assoc conf :verbose? true))
         silent-handler  (cards/get-handler (assoc conf :silent? true))
