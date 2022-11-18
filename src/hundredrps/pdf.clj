@@ -1,6 +1,7 @@
 (ns hundredrps.pdf
   (:require [clojure.java.io :as io]
             [hundredrps.text :as text]
+            [hundredrps.image :as img]
             [malli.core :as m])
   (:import
    java.io.ByteArrayOutputStream
@@ -107,14 +108,16 @@
 
   ;; #p ctx
   ;; #p action
-  (let [image-bytes (get-in ctx image)
+  (let [aspect-ratio (/ (:width size 100) (:height size 100))
+        image-bytes  (img/crop-img (get-in ctx image) aspect-ratio)
+
         image (. PDImageXObject createFromByteArray document image-bytes "hi")]
     (.drawImage page-cs
                 image
-                (float (:x position 0.0))
-                (float (:y position 0.0))
-                (float (:width size 100.0))
-                (float (:height size 100.0)))))
+                (float (:x position 0))
+                (float (:y position 0))
+                (float (:width size 100))
+                (float (:height size 100)))))
 
 (def form-data
   {:childhood-memories "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.",
