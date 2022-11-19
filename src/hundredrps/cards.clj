@@ -32,6 +32,17 @@
         request (-> x (dissoc :method) map->json-http-request)]
     (http/post url request callback)))
 
+(defn send-pdf
+  [api-url & {:keys [name chat_id file] :or {name "card.pdf"}}]
+  (http/request
+   {:url          (str api-url "/sendDocument")
+    :method       :post
+    :query-params {"chat_id" chat_id}
+    :multipart    [{:name         "document"
+                    :filename     name
+                    :content-type "application/pdf"
+                    :content      file}]}))
+
 (defn deconstruct-update
   "Extract message, message-type and possible photo and text from
   update."
