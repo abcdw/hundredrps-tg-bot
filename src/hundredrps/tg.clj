@@ -1,4 +1,75 @@
-(ns hundredrps.tg)
+(ns hundredrps.tg
+  (:require [malli.core :as m]
+            [malli.experimental.lite :as l]
+            [malli.registry :as mr]
+            [malli.util :as mu]))
+
+
+;;; Schemas
+
+(def registry
+  (merge
+   (m/default-schemas)
+   (mu/schemas)
+   {:telegram/photo-size
+    [:map
+     [:file_id :string]
+     [:file_unique_id :string]
+     [:width :int]
+     [:height :int]
+     [:file_size {:optional true} :int]]
+
+    :telegram/successful-payment
+    [:map
+     [:currency :string]
+     [:total_amount :int]
+     [:invoice_payload :string]]
+
+    :telegram/user
+    [:map
+     [:id :int]
+     [:is_bot :boolean]
+     [:first_name :string]
+     [:first_name {:optional true} :string]
+     [:language_code {:optional true} :string]]
+
+    :telegram/chat
+    [:map
+     [:id :int]
+     [:type :string]]
+
+    :telegram/pre-checkout-query
+    [:map
+     [:id :string]
+     [:currency :string]
+     [:from :telegram/user]
+     [:invoice_payload :string]]
+
+
+    :telegram/message
+    [:map
+     [:message_id :int]
+     [:text {:optional true} :string]
+     [:photo {:optional true} [:vector :telegram/photo-size]]
+     [:successful_payment {:optional true} :telegram/successful-payment]]
+
+    :tg/message-base [:map [:message_id :int]]
+    :tg/text         [:merge :tg/message-base
+                      [:map [:text :string]]]
+
+    :tg/photo [:merge :tg/message-base
+               [:map [:photo [:vector :tg/photo-size]]]]
+
+    :tg/message [:orn
+                 [:text :tg/text]
+                 [:photo :tg/photo]]
+
+    :tg/update [:orn
+                [:message [:map [:message :tg/message]]]
+                [:edited_message [:map [:edited_message :tg/message]]]]}))
+
+
+;;; Helpers
 
 (defn get-payload
   "Get message from update."
