@@ -5,6 +5,9 @@
    [jsonista.core :as j]
    [org.httpkit.client :as http]))
 
+
+;;; Helpers
+
 (defn map->json-http-request
   "Convert map to json, and then wrap in ring form so it can be used in
   POST query."
@@ -65,6 +68,9 @@
           ;; Sort is needed to make sure that messages with lower id
           ;; processed earlier
           {} (sort values)))
+
+
+;;; Chat
 
 (defn update-state-value
   [old-value parsed-upd & [step]]
