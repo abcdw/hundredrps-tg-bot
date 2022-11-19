@@ -3,7 +3,9 @@
          aero/aero                {:mvn/version "1.1.6"}
          integrant/integrant      {:mvn/version "0.8.0"}
          http-kit/http-kit        {:mvn/version "2.6.0"}
-         metosin/malli            {:mvn/version "0.9.2"}
+         ;; Temporary fix: https://github.com/metosin/malli/pull/783
+         com.github.abcdw/malli   {:git/sha "963c7250ca1b7d3d3dce010d9aba2b0b7f8f7c9a"}
+         ;; metosin/malli            {:mvn/version "0.9.2"}
          org.apache.pdfbox/pdfbox {:mvn/version "2.0.26"}}
 
  :aliases
