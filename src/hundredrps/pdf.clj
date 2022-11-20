@@ -57,11 +57,12 @@
 (defmethod add-pdf-part! :text
   [{:keys [page-cs]
     :as   ctx}
-   {:keys [text position fill-column horizontal-spacing font font-size color]
+   {:keys [text position fill-column horizontal-spacing font font-size color character-spacing]
     :or   {fill-column        45
            horizontal-spacing 4.0
            font               [:fonts :kosko-bold.ttf]
-           font-size          21}
+           font-size          21
+           character-spacing  0}
     :as   action}]
 
   ;; #p ctx
@@ -69,6 +70,7 @@
   (let [wrapped-text (wrap-line (get-obj ctx text) fill-column)]
     (.beginText page-cs)
     (.setFont page-cs (get-font ctx font) font-size)
+    (.setCharacterSpacing page-cs character-spacing)
     (when color (.setNonStrokingColor page-cs (get-color ctx color)))
     (.newLineAtOffset page-cs (:x position 0) (:y position 0))
     (doseq [index (range (count wrapped-text))
@@ -80,11 +82,12 @@
 (defmethod add-pdf-part! :centered-text
   [{:keys [page-cs]
     :as   ctx}
-   {:keys [text position fill-column horizontal-spacing font font-size color]
+   {:keys [text position fill-column horizontal-spacing font font-size color character-spacing]
     :or   {fill-column        45
            horizontal-spacing 4.0
            font               [:fonts :kosko-bold.ttf]
-           font-size          21}
+           font-size          21
+           character-spacing  0}
     :as   action}]
   (let [wrapped-text (wrap-line (get-obj ctx text) fill-column)
         maxWidth (reduce max (map #(* (/ (.getStringWidth (get-font ctx font) %) 1000) font-size) wrapped-text))
@@ -95,6 +98,7 @@
         y          (+ centerY (/ textHeight 2))]
     (.beginText page-cs)
     (.setFont page-cs (get-font ctx font) font-size)
+    (.setCharacterSpacing page-cs character-spacing)
     (when color (.setNonStrokingColor page-cs (get-color ctx color)))
     (.newLineAtOffset page-cs x y)
     (doseq [index (range (count wrapped-text))
@@ -106,9 +110,10 @@
 (defmethod add-pdf-part! :signature
   [{:keys [page-cs page]
     :as   ctx}
-   {:keys [text position font font-size color]
+   {:keys [text position font font-size color character-spacing]
     :or   {font      [:fonts :kosko-bold.ttf]
-           font-size 21}
+           font-size 21
+           character-spacing 0}
     :as   action}]
   (let [text           (get-obj ctx text)
         font           (get-font ctx font)
@@ -121,6 +126,7 @@
 
     (.beginText page-cs)
     (.setFont page-cs font font-size)
+    (.setCharacterSpacing page-cs character-spacing)
     (when color (.setNonStrokingColor page-cs (get-color ctx color)))
     (.newLineAtOffset page-cs x y)
     (.drawString page-cs text)
