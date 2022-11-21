@@ -15,9 +15,8 @@
   "Convert map to json, and then wrap in ring form so it can be used in
   POST query."
   [x]
-  (let [body (j/write-value-as-string x)]
-    {:headers {"Content-Type"   "application/json"
-               "Content-Length" (count body)}
+  (let [body (j/write-value-as-bytes x)]
+    {:headers {"Content-Type"   "application/json"}
      :body    body}))
 
 (defn msg->http-response
