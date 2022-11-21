@@ -75,6 +75,9 @@
                 [:message [:map [:message :tg/message]]]
                 [:edited_message [:map [:edited_message :tg/message]]]]}))
 
+(def fast-registry
+  (mr/fast-registry registry))
+
 
 ;;; Helpers
 
