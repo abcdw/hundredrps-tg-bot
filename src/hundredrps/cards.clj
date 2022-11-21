@@ -218,10 +218,17 @@
 
 (defn get-registry
   [config]
-  (merge
-   (get-in config [:general :schemas])
-   (apply into {}
-          (map :schemas (or (some-> config :cards vals) [])))))
+  (let [schemas (merge
+                 (get-in config [:general :schemas])
+                 (apply into {}
+                        (map :schemas (or (some-> config :cards vals) []))))
+        reg     (merge tg/registry schemas)]
+    ;; A little bit of magic to check schemas compiles
+    (update-vals
+     schemas
+     #(-> (m/schema % {:registry reg})
+          (m/deref-all)
+          (m/form)))))
 
 (defmulti perform-action
   (fn [_ a] (:action a)))
