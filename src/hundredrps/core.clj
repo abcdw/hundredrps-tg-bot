@@ -78,23 +78,18 @@
 
 (defmethod ig/init-key :db/value [_ val] (atom val))
 
-(defmethod ig/init-key :cards/resources [_ val]
-  val)
+(defmethod ig/init-key :cards/resources [_ val] val)
 
-(defmethod ig/init-key :pdf/templates [_ val]
-  val)
+(defmethod ig/init-key :pdf/templates [_ val] val)
 
-(defmethod ig/init-key :pdf/cards [_ val]
-  val)
+(defmethod ig/init-key :pdf/cards [_ val] val)
 
-(defmethod ig/init-key :text/templates [_ val]
-  val)
+(defmethod ig/init-key :text/templates [_ val] val)
 
 (defmethod ig/init-key :handler/webhook [_ ctx]
   (cards/get-handler-new ctx))
 
-(defmethod ig/init-key :chat/config [_ val]
-  val)
+(defmethod ig/init-key :chat/config [_ val] val)
 
 (defmethod ig/init-key :chat/registry [_ {:chat/keys [config] :as ctx}]
   (cards/get-registry config))
