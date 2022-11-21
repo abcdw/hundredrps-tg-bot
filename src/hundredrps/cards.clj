@@ -223,6 +223,41 @@
    (apply into {}
           (map :schemas (or (some-> config :cards vals) [])))))
 
+(defmulti perform-action
+  (fn [_ a] (:action a)))
+
+(defmethod perform-action :to-step
+  [ctx {:keys [step]}]
+  (assoc-in ctx [:state :step] step))
+
+(defmethod perform-action :extract-text
+  [ctx _]
+  (->>
+   (get-in ctx [:update :message :text])
+   (assoc-in ctx [:data :text])))
+
+(defmethod perform-action :save-value
+  [ctx {:keys [value-path]}]
+  (assoc-in ctx [:state :values (tg/get-message-id (:update ctx))]
+            (get-in ctx value-path)))
+
+(defmethod perform-action :save-text
+  [ctx {:keys [value-path]}]
+  (perform-action ctx {:action :save-value :value-path [:data :text]}))
+
+(defmethod perform-action :add-message
+  [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
+  (update ctx :messages conj (merge {:chat_id chat-id} message)))
+
+(defmethod perform-action :add-messages
+  [ctx {:keys [messages]}]
+  (reduce #(perform-action %1 {:action  :add-message
+                               :message %2})
+          ctx messages))
+
+;; TODO: check config uses correct actions
+;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
+
 (defn process-update-new
   [ctx update]
   (let [db (:db/value ctx)
