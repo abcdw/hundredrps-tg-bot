@@ -209,8 +209,9 @@
   (let [transitions
         (->> (:cards config)
              (reduce (fn [acc [k v]] (conj acc [k (:transitions v)]))
-                     [[:general (get-in config [:general :menu])]])
-             (into [:orn]))]
+                     [[:menu (get-in config [:general :menu])]])
+             (into [:orn])
+             (#(conj % [:fallback (get-in config [:general :fallback])])))]
     (m/parser transitions {:registry
                            (mr/fast-registry
                             (merge tg/registry registry))})))

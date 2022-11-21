@@ -1,0 +1,60 @@
+{:schemas
+ {:tg/start
+  [:map [:message [:map [:text [:re "/start.*"]]]]]}
+
+ :menu
+ [:orn
+  [[{:action :to-step :step [:start]}
+    {:action :add-messages :messages #ref [:messages :start]}]
+   [:map [:update :tg/start]]]]
+
+ :fallback
+ [:orn
+  [[{:action :add-message :message #ref [:messages :press-start]}]
+   [:map [:update :telegram/update]]]]
+
+ :card-cost 199
+ :messages
+ {:press-start
+  {:text         "Ого, вы не нажали /start, нажимайте скорее!"
+   :reply_markup {:remove_keyboard true}}
+
+  :start
+  [{:text "Привет! Это Андрей и Гульнара, а это наш бот, который умеет делать цифровые открытки, как на видео ниже. "
+    :reply_markup
+    {:inline_keyboard
+     [[{:text "Как выглядит «Лучшая женщина в мире»"
+        :url  "https://disk.yandex.ru/i/_96I19wyaGsPUQ"}]
+      [{:text "Как выглядит «Письмо маме»"
+        :url  "https://disk.yandex.ru/i/A2lwriRYnsfv3w"}]
+      [{:text "Как выглядит «Письмо о любви»"
+        :url  "https://disk.yandex.ru/i/dC_kJTF4sixzRQ"}]]}}
+   {:text
+    #join
+    ["Стоимость услуги " #ref [:card-cost]
+     " ₽. Если у вас остались вопросы или что-то не сработает, "
+     "пишите нам @cardsandcare"]}
+   {:reply_markup {:remove_keyboard true}
+    :text
+    "Выберите откытку:
+1. Лучшая женщина в мире (открытка на 8 марта для мамы) - нажмите на /bestWoman
+2. Письмо маме (трогательное письмо для мамы) - нажмите на /letterForMother
+3. Письмо о любви (романтическое письмо для любимого человека) - нажмите на /loveLetter"}]
+
+  :stop
+  [{:text         "Пока! Напиши нам что не понравилось на @cardsandcare"
+    :reply_markup {:remove_keyboard true}}]
+
+  :help
+  [{:text "/start - Запустить бота / Перезапустить бота
+/stop - Остановить бота
+/help - Cписок команд
+/bestWoman - Лучшая женщина в мире (открытка на 8 марта для мамы)
+/letterForMother - Письмо маме (трогательное письмо для мамы)
+/loveLetter - Письмо о любви (романтическое письмо для любимого человека)
+
+Если что-то не работает, перезапустите бота командой /start и пройдите заново.
+
+Если не поможет, напишите в телеграм @cardsandcare"}]}
+
+ }
