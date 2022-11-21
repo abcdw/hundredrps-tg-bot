@@ -6,6 +6,7 @@
    [malli.error :as me]
    [malli.experimental.lite :as ml]
    [hundredrps.cards :as cards]
+   [hundredrps.tg :as tg]
    [hundredrps.core]
    [integrant.core :as ig]
    [jsonista.core :as j]
@@ -160,3 +161,33 @@
                                  (me/humanize))
                    :message ~msg
                    :type (if is-valid?# :pass :fail)})))
+
+(deftest letter-for-mother-new
+  (testing "Dialog with photo and errors."
+    (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
+                      io/resource io/file slurp read-string))
+    (let [system       (ig/init (hundredrps.core/get-config)
+                              [:chat/logic :chat/registry])
+          chat-id      (tg/get-chat-id (get-in updates [0]))
+          chat-logic   (:chat/logic system)
+          chat-context (cards/prepare-chat-context
+                        (first updates)
+                        {} chat-id)
+
+          update-context #(-> (cards/prepare-chat-context
+                               (get-in updates [%1])
+                               (:state %2) chat-id)
+                              (cards/eval-update chat-logic))]
+
+      (def hi (cards/eval-update chat-context chat-logic))
+      (is (validl {:messages [:vector {:min 1} :map]} hi))
+
+      (def o (update-context 1 hi))
+      (is (validl {:messages [:vector {:min 1} :map]} o))
+
+      (def start (update-context 2 hi))
+      (is (validl {:messages [:vector {:min 1} :map]
+                   :state    {:step [:= [:start]]}} start))
+
+      ;; (is (= values-01 values))
+      )))
