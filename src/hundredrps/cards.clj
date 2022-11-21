@@ -261,7 +261,7 @@
   [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
   (update ctx :messages conj (merge {:chat_id chat-id} message)))
 
-(defmethod perform-action :add-messages
+(defmethod perform-action :add-multiple-messages
   [ctx {:keys [messages]}]
   (reduce #(perform-action %1 {:action  :add-message
                                :message %2})
