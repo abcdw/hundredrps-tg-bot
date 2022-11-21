@@ -2,7 +2,7 @@
   (:require
    [clojure.java.io :as io]
    [clojure.test :refer [deftest is testing]]
-   [hundredrps.cards :as sut]
+   [hundredrps.cards :as cards]
    [hundredrps.core]
    [integrant.core :as ig]
    [jsonista.core :as j]
@@ -56,7 +56,7 @@
 
           logic  (get-in (hundredrps.core/get-config) [:db/value :logic])
           values (-> (reduce
-                      #(sut/process-update (:state %1) logic %2)
+                      #(cards/process-update (:state %1) logic %2)
                       {:state {}}
                       updates)
                      (get-in [:state :values]))]
@@ -67,7 +67,7 @@
 
           logic  (get-in (hundredrps.core/get-config) [:db/value :logic])
           values (-> (reduce
-                      #(sut/process-update (:state %1) logic %2)
+                      #(cards/process-update (:state %1) logic %2)
                       {:state {}}
                       updates)
                      (get-in [:state :values]))]
@@ -113,7 +113,7 @@
 
   (testing "Conversion of simple values to data suitable for pdf."
     (is (= data-for-pdf-00
-           (sut/values->pdf-data {} values-00))))
+           (cards/values->pdf-data {} values-00))))
 
   (let [{:tg/keys [file-url api-url] :as ctx}
         (-> (hundredrps.core/get-config)
@@ -133,7 +133,7 @@
     (with-fake-http [get-file-url {:body get-file-response}
                      photo-url    {:body photo :status 200}]
       (testing "Obtaining image from tg servers."
-        (let [prepared-data (-> (sut/values->pdf-data ctx values-01)
+        (let [prepared-data (-> (cards/values->pdf-data ctx values-01)
                                 (update-in [:letter-for-mother :photo-with-mom]
                                            slurp))]
           (is (= data-for-pdf-01 prepared-data)))))))
