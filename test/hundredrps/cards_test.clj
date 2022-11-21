@@ -165,32 +165,81 @@
 (deftest letter-for-mother-new
   (testing "Dialog with photo and errors."
     (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
-                      io/resource io/file slurp read-string))
-    (let [system       (ig/init (hundredrps.core/get-config)
-                                [:chat/logic :chat/registry])
-          chat-id      (tg/get-chat-id (get-in updates [0]))
-          chat-logic   (:chat/logic system)
+                     io/resource io/file slurp read-string))
+    (let [system     (ig/init (hundredrps.core/get-config)
+                              [:chat/logic :chat/registry
+                               :tg/api-url :tg/file-url])
+          chat-id    (tg/get-chat-id (get-in updates [0]))
+          chat-logic (:chat/logic system)
 
           update-context #(-> (cards/prepare-chat-context
                                system
                                (get-in updates [%1])
                                (:state %2))
                               (cards/eval-update chat-logic))]
+      (with-fake-http [;; get-file-url {:body get-file-response}
+                       ;; photo-url    {:body photo :status 200}
+                       #"sendPhoto" {:status 200}
+                       #"sendMessage" {:status 200}]
 
-      (def lfmn-hi (update-context 0 {:state {}}))
-      (is (validl {:messages [:vector {:min 1} :map]
-                   :state    [:map {:closed true}]} lfmn-hi))
+        (def lfmn-hi (update-context 0 {:state {}}))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    [:map {:closed true}]} lfmn-hi))
 
-      (def lfmn-o (update-context 1 lfmn-hi))
-      (is (validl {:messages [:vector {:min 1} :map]
-                   :state    [:map {:closed true}]} lfmn-o))
+        (def lfmn-o (update-context 1 lfmn-hi))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    [:map {:closed true}]} lfmn-o))
 
-      (def start (update-context 2 lfmn-o))
-      (is (validl {:messages [:vector {:min 1} :map]
-                   :state    {:step [:= [:start]]}} start))
+        (def start (update-context 2 lfmn-o))
+        (is (validl {:messages [:vector {:min 3} :map]
+                     :state    {:step [:= [:start]]}} start))
 
-      ;; (is (= values-01 values))
-      )))
+        (def lfmn-greeting (update-context 3 start))
+        (is (validl {:messages [:vector {:min 3} :map]
+                     :state    {:step [:= [:letter-for-mother :greeting]]}}
+                    lfmn-greeting))
+
+        (def lfmn-neponiatno (update-context 4 lfmn-greeting))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :greeting]]}}
+                    lfmn-neponiatno))
+
+        (def lfmn-poniatno (update-context 5 lfmn-neponiatno))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :live-together?]]}}
+                    lfmn-poniatno))
+
+        (def lfmn-hm (update-context 6 lfmn-poniatno))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :live-together?]]}}
+                    lfmn-hm))
+
+        (def lfmn-separate (update-context 7 lfmn-hm))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :sibling]]}}
+                    lfmn-separate))
+
+        (def lfmn-ochi (update-context 8 lfmn-separate))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :sibling]]}}
+                    lfmn-ochi))
+
+        (def lfmn-son (update-context 9 lfmn-ochi))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :photo-with-mom]]}}
+                    lfmn-son))
+
+        (def lfmn-helo (update-context 10 lfmn-son))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :photo-with-mom]]}}
+                    lfmn-helo))
+
+        (def lfmn-photo (update-context 11 lfmn-helo))
+        (is (validl {:messages [:vector {:min 1} :map]
+                     :state    {:step [:= [:letter-for-mother :what-mom-cooked]]}}
+                    lfmn-photo))
+        ;; (is (= values-01 values))
+        ))))
 
 ;; (def system
 ;;   (ig/init (hundredrps.core/get-config)
