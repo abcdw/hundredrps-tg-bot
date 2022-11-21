@@ -260,9 +260,8 @@
 
 (defn eval-update
   [ctx chat-logic]
-  (let [a :b
-        [_ [actions parsed-ctx]] (chat-logic ctx)]
-    (reduce #(perform-action %1 %2) parsed-ctx #p actions)))
+  (let [[_ [actions parsed-ctx]] (chat-logic ctx)]
+    (reduce #(perform-action %1 %2) ctx actions)))
 
 (defn prepare-chat-context
   [update chat-state chat-id]
