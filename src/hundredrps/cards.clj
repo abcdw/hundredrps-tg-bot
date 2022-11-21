@@ -306,7 +306,12 @@
         chat-context (prepare-chat-context
                       ctx update chat-state)
 
-        response {:status 200}]
+        {:keys [state response] :as result}
+        (eval-update chat-context chat-logic)
+
+        _ (swap! db assoc-in [chat-id :state] state)
+
+        response (merge {:status 200} response)]
     response))
 
 (defn get-handler-new
