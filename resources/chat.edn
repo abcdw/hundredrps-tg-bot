@@ -9,7 +9,7 @@
     {:action :add-multiple-messages :messages #ref [:messages :start]}
     {:action :extract-text}
     {:action :save-text}
-    {:action :send-messages-async!}]
+    {:action :send-messages!}]
    [:map [:update :menu/start]]]
 
   [[{:action :add-message :message #ref [:messages :stop]}
