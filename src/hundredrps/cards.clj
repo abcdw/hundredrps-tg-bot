@@ -268,6 +268,11 @@
                                :message %2})
           ctx messages))
 
+(defmethod perform-action :send-messages-async!
+  [{:keys [messages] :tg/keys [api-url] :as ctx} _]
+  (future (doall (map #(deref (async-call api-url %)) messages)))
+  (assoc ctx :messages-sent? true))
+
 (defmethod perform-action :add-response-from-message
   [{:keys [messages messages-sent?] :as ctx} _]
   (if (and (= 1 (count messages)) (not messages-sent?))
