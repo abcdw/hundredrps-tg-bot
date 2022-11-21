@@ -240,16 +240,23 @@
   [ctx {:keys [step]}]
   (assoc-in ctx [:state] {}))
 
+(defmacro assert-schema
+  "Use this macro when you pine for the notation of your childhood"
+  [schema val]
+  `(assert
+    (m/validate ~schema ~val {:registry tg/fast-registry})
+    (m/explain ~schema ~val {:registry tg/fast-registry})))
+
 (defmethod perform-action :extract-text
   [{:keys [update] :as ctx} _]
-  (m/validate :telegram/update update {:registry tg/fast-registry})
+  (assert-schema :telegram/update update)
   (->>
    (get-in ctx [:update :message :text])
    (assoc-in ctx [:data :text])))
 
 (defmethod perform-action :save-value
   [{:keys [update] :as ctx} {:keys [value-path]}]
-  (m/validate :telegram/update update {:registry tg/fast-registry})
+  (assert-schema :telegram/update update)
   (assoc-in ctx [:state :values (tg/get-message-id (:update ctx))]
             (get-in ctx value-path)))
 
@@ -259,6 +266,7 @@
 
 (defmethod perform-action :add-message
   [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
+  (assert-schema :tg/outgoing-message message)
   (update ctx :messages conj (merge {:chat_id chat-id} message)))
 
 (defmethod perform-action :add-multiple-messages
