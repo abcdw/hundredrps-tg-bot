@@ -222,6 +222,20 @@
    (apply into {}
           (map :schemas (or (some-> config :cards vals) [])))))
 
+(defn process-update-new
+  [ctx update]
+  (let [db (:db/value ctx)
+
+        chat-id       (tg/get-chat-id update)
+        chat-state    (get-in @db [chat-id :state] {})
+        chat-logic    (get-in ctx [:chat/logic])
+
+        chat-context (prepare-chat-context
+                      update chat-state chat-id)
+
+        response {:status 200}]
+    response))
+
 (defn get-handler-new
   "Returns a function, which process http requests.
   `silent?` control if handler send messages at all it useful to setup
@@ -232,4 +246,12 @@
     :as      ctx}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]
-      {:status 200})))
+      (let [update (j/read-value body j/keyword-keys-object-mapper)
+
+            response
+            (if (m/validate :telegram/update update
+                            {:registry tg/fast-registry})
+              (process-update-new ctx update)
+              {:status 400})]
+
+        response))))
