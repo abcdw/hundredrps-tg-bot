@@ -76,7 +76,7 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
-(defmethod ig/init-key :db/value [_ val] (atom val))
+(defmethod ig/init-key :db/value [_ val] (atom {}))
 
 (defmethod ig/init-key :cards/resources [_ val] val)
 
