@@ -1,12 +1,13 @@
 {:paths ["src" "resources"]
- :deps  {metosin/jsonista         {:mvn/version "0.3.6"}
-         aero/aero                {:mvn/version "1.1.6"}
-         integrant/integrant      {:mvn/version "0.8.0"}
-         http-kit/http-kit        {:mvn/version "2.6.0"}
+ :deps  {metosin/jsonista          {:mvn/version "0.3.6"}
+         aero/aero                 {:mvn/version "1.1.6"}
+         integrant/integrant       {:mvn/version "0.8.0"}
+         http-kit/http-kit         {:mvn/version "2.6.0"}
          ;; Temporary fix: https://github.com/metosin/malli/pull/783
-         com.github.abcdw/malli   {:git/sha "963c7250ca1b7d3d3dce010d9aba2b0b7f8f7c9a"}
+         org.clojure/clojurescript {:mvn/version "1.11.60"}
+         com.github.metosin/malli  {:git/sha "a341f16969b317586e46cc37d6d17aac636d8f46"}
          ;; metosin/malli            {:mvn/version "0.9.2"}
-         org.apache.pdfbox/pdfbox {:mvn/version "2.0.26"}}
+         org.apache.pdfbox/pdfbox  {:mvn/version "2.0.26"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]
