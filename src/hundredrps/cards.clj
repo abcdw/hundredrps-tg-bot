@@ -237,6 +237,10 @@
   [ctx {:keys [step]}]
   (assoc-in ctx [:state :step] step))
 
+(defmethod perform-action :clear-state
+  [ctx {:keys [step]}]
+  (assoc-in ctx [:state] {}))
+
 (defmethod perform-action :extract-text
   [ctx _]
   (->>
