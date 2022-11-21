@@ -45,7 +45,6 @@
      [:from :telegram/user]
      [:invoice_payload :string]]
 
-
     :telegram/message
     [:map
      [:message_id :int]
@@ -59,6 +58,13 @@
     [:or
      [:map [:message :telegram/message]]
      [:map [:edited_message :telegram/edited_message]]]
+
+    :tg/outgoing-text [:map [:text :string]]
+
+    :tg/outgoing-photo [:map [:photo :string]]
+
+    :tg/outgoing-message
+    [:or :tg/outgoing-text :tg/outgoing-photo]
 
     :tg/message-base [:map [:message_id :int]]
     :tg/text         [:merge :tg/message-base
