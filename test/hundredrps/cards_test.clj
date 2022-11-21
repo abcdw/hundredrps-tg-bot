@@ -1,7 +1,10 @@
 (ns hundredrps.cards-test
   (:require
    [clojure.java.io :as io]
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing] :as t]
+   [malli.core :as m]
+   [malli.error :as me]
+   [malli.experimental.lite :as ml]
    [hundredrps.cards :as cards]
    [hundredrps.core]
    [integrant.core :as ig]
@@ -137,3 +140,23 @@
                                 (update-in [:letter-for-mother :photo-with-mom]
                                            slurp))]
           (is (= data-for-pdf-01 prepared-data)))))))
+
+(defmethod t/assert-expr 'valid
+  [msg [_ schema data]]
+  `(let [is-valid?# (m/validate ~schema ~data)]
+     (t/do-report {:actual ~data
+                   :expected (-> ~schema
+                                 (m/explain ~data)
+                                 (me/humanize))
+                   :message ~msg
+                   :type (if is-valid?# :pass :fail)})))
+
+(defmethod t/assert-expr 'validl
+  [msg [_ schema data]]
+  `(let [is-valid?# (m/validate (ml/schema ~schema) ~data)]
+     (t/do-report {:actual ~data
+                   :expected (-> (ml/schema ~schema)
+                                 (m/explain ~data)
+                                 (me/humanize))
+                   :message ~msg
+                   :type (if is-valid?# :pass :fail)})))
