@@ -268,13 +268,23 @@
                                :message %2})
           ctx messages))
 
+(defmethod perform-action :add-response-from-message
+  [{:keys [messages messages-sent?] :as ctx} _]
+  (if (and (= 1 (count messages)) (not messages-sent?))
+    (assoc ctx :response (msg->http-response (first messages)))
+    ctx))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
+
+(def default-actions
+  ;; TODO: Move to chat config
+  [{:action :add-response-from-message}])
 
 (defn eval-update
   [ctx chat-logic]
   (let [[_ [actions parsed-ctx]] (chat-logic ctx)]
-    (reduce #(perform-action %1 %2) ctx actions)))
+    (reduce #(perform-action %1 %2) ctx #p (into actions default-actions))))
 
 (defn prepare-chat-context
   [ctx update chat-state]
