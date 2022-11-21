@@ -261,8 +261,27 @@
             (get-in ctx value-path)))
 
 (defmethod perform-action :save-text
-  [ctx {:keys [value-path]}]
+  [ctx _]
   (perform-action ctx {:action :save-value :value-path [:data :text]}))
+
+(defmethod perform-action :extract-and-save-text
+  [ctx _]
+  (-> ctx
+   (perform-action {:action :extract-text})
+   (perform-action {:action :save-text})))
+
+(defmethod perform-action :extract-photo
+  [{:keys [update] :as ctx} _]
+  (assert-schema :telegram/update update)
+  (->>
+   (some-> ctx :update :message :photo last)
+   (assoc-in ctx [:data :photo])))
+
+(defmethod perform-action :extract-and-save-photo
+  [ctx _]
+  (-> ctx
+   (perform-action {:action :extract-photo})
+   (perform-action {:action :save-value :value-path [:data :photo]})))
 
 (defmethod perform-action :add-message
   [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
