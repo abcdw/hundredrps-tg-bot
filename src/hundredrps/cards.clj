@@ -242,13 +242,15 @@
   (assoc-in ctx [:state] {}))
 
 (defmethod perform-action :extract-text
-  [ctx _]
+  [{:keys [update] :as ctx} _]
+  (m/validate :telegram/update update {:registry tg/fast-registry})
   (->>
    (get-in ctx [:update :message :text])
    (assoc-in ctx [:data :text])))
 
 (defmethod perform-action :save-value
-  [ctx {:keys [value-path]}]
+  [{:keys [update] :as ctx} {:keys [value-path]}]
+  (m/validate :telegram/update update {:registry tg/fast-registry})
   (assoc-in ctx [:state :values (tg/get-message-id (:update ctx))]
             (get-in ctx value-path)))
 
