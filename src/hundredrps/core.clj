@@ -91,7 +91,17 @@
   val)
 
 (defmethod ig/init-key :handler/webhook [_ ctx]
-  (cards/get-handler ctx))
+  (cards/get-handler-new ctx))
+
+(defmethod ig/init-key :chat/config [_ val]
+  val)
+
+(defmethod ig/init-key :chat/registry [_ {:chat/keys [config] :as ctx}]
+  (cards/get-registry config))
+
+(defmethod ig/init-key :chat/logic [_ {:chat/keys [config registry] :as ctx}]
+  (cards/prepare-chat-logic config registry))
+
 
 (defn get-config
   "Read integrant system description from config.edn."

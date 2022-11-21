@@ -7,13 +7,24 @@
                    :text/templates  #ig/ref :text/templates
                    :cards/resources #ig/ref :cards/resources
 
-                   :db/value #ig/ref :db/value}
+                   :chat/logic #ig/ref :chat/logic
+                   :db/value   #ig/ref :db/value}
+
  :tg/api-token #env TELEGRAM_TOKEN
  :tg/api-url   {:base-url  "https://api.telegram.org/bot"
                 :api-token #ig/ref :tg/api-token}
  :tg/file-url  {:base-url  "https://api.telegram.org/file/bot"
                 :api-token #ig/ref :tg/api-token}
  :db/value     {:logic #include "logic.edn"}
+ ;; TODO: Add payment provider token
+
+ :chat/config
+ {:general #include "chat.edn"
+  :cards   {:letter-for-mother #include "cards/letter-for-mother/chat.edn"}}
+
+ :chat/registry {:chat/config #ig/ref :chat/config}
+ :chat/logic    {:chat/config   #ig/ref :chat/config
+                 :chat/registry #ig/ref :chat/registry}
 
  :cards/resources
  {:fonts   #cards/resource-dir "cards/fonts"

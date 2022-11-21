@@ -3,6 +3,9 @@
    [clojure.java.io :as io]
    [hundredrps.tg :as tg]
    [jsonista.core :as j]
+   [malli.core :as m]
+   [malli.registry :as mr]
+   [malli.util :as mu]
    [org.httpkit.client :as http]))
 
 
@@ -200,3 +203,33 @@
               (future
                 (doall (map #(deref (async-call api-url %)) replies)))
               {:status 200})))))))
+
+(defn prepare-chat-logic
+  [config registry]
+  (let [transitions
+        (->> (:cards config)
+             (reduce (fn [acc [k v]] (conj acc [k (:transitions v)]))
+                     [[:general (get-in config [:general :menu])]])
+             (into [:orn]))]
+    (m/parser transitions {:registry
+                           (mr/fast-registry
+                            (merge tg/registry registry))})))
+
+(defn get-registry
+  [config]
+  (merge
+   (get-in config [:general :schemas])
+   (apply into {}
+          (map :schemas (or (some-> config :cards vals) [])))))
+
+(defn get-handler-new
+  "Returns a function, which process http requests.
+  `silent?` control if handler send messages at all it useful to setup
+  the needed state before testing. `verbose?` forces handler to reply
+  always with api call rather than return value to webhook."
+  [{:keys    [silent? verbose?]
+    :tg/keys [api-url file-url]
+    :as      ctx}]
+  (let [stats (atom {:request-count 0})]
+    (fn [{:keys [body] :as request}]
+      {:status 200})))
