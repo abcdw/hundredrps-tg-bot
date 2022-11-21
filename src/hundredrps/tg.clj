@@ -53,12 +53,19 @@
      [:photo {:optional true} [:vector :telegram/photo-size]]
      [:successful_payment {:optional true} :telegram/successful-payment]]
 
+    :telegram/edited_message :telegram/message
+
+    :telegram/update
+    [:or
+     [:map [:message :telegram/message]]
+     [:map [:edited_message :telegram/edited_message]]]
+
     :tg/message-base [:map [:message_id :int]]
     :tg/text         [:merge :tg/message-base
                       [:map [:text :string]]]
 
     :tg/photo [:merge :tg/message-base
-               [:map [:photo [:vector :tg/photo-size]]]]
+               [:map [:photo [:vector :telegram/photo-size]]]]
 
     :tg/message [:orn
                  [:text :tg/text]
