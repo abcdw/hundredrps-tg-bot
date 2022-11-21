@@ -271,22 +271,24 @@
     (reduce #(perform-action %1 %2) ctx actions)))
 
 (defn prepare-chat-context
-  [update chat-state chat-id]
-  {:messages []
-   :data     {:chat-id chat-id}
-   :update   update
-   :state    chat-state})
+  [ctx update chat-state]
+  (merge
+   (select-keys ctx [:tg/api-url :tg/file-url])
+   {:messages []
+    :data     {:chat-id (tg/get-chat-id update)}
+    :update   update
+    :state    chat-state}))
 
 (defn process-update-new
   [ctx update]
   (let [db (:db/value ctx)
 
-        chat-id       (tg/get-chat-id update)
-        chat-state    (get-in @db [chat-id :state] {})
-        chat-logic    (get-in ctx [:chat/logic])
+        chat-id    (tg/get-chat-id update)
+        chat-state (get-in @db [chat-id :state] {})
+        chat-logic (get-in ctx [:chat/logic])
 
         chat-context (prepare-chat-context
-                      update chat-state chat-id)
+                      ctx update chat-state)
 
         response {:status 200}]
     response))
@@ -297,7 +299,6 @@
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
   [{:keys    [silent? verbose?]
-    :tg/keys [api-url file-url]
     :as      ctx}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]

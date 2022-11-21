@@ -167,27 +167,41 @@
     (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
                       io/resource io/file slurp read-string))
     (let [system       (ig/init (hundredrps.core/get-config)
-                              [:chat/logic :chat/registry])
+                                [:chat/logic :chat/registry])
           chat-id      (tg/get-chat-id (get-in updates [0]))
           chat-logic   (:chat/logic system)
-          chat-context (cards/prepare-chat-context
-                        (first updates)
-                        {} chat-id)
 
           update-context #(-> (cards/prepare-chat-context
+                               system
                                (get-in updates [%1])
-                               (:state %2) chat-id)
+                               (:state %2))
                               (cards/eval-update chat-logic))]
 
-      (def hi (cards/eval-update chat-context chat-logic))
-      (is (validl {:messages [:vector {:min 1} :map]} hi))
+      (def lfmn-hi (update-context 0 {:state {}}))
+      (is (validl {:messages [:vector {:min 1} :map]
+                   :state    [:map {:closed true}]} lfmn-hi))
 
-      (def o (update-context 1 hi))
-      (is (validl {:messages [:vector {:min 1} :map]} o))
+      (def lfmn-o (update-context 1 lfmn-hi))
+      (is (validl {:messages [:vector {:min 1} :map]
+                   :state    [:map {:closed true}]} lfmn-o))
 
-      (def start (update-context 2 hi))
+      (def start (update-context 2 lfmn-o))
       (is (validl {:messages [:vector {:min 1} :map]
                    :state    {:step [:= [:start]]}} start))
 
       ;; (is (= values-01 values))
       )))
+
+;; (def system
+;;   (ig/init (hundredrps.core/get-config)
+;;            [:chat/logic :chat/registry]))
+;; (m/form
+;;  (:chat/logic system)
+;;  {:registry (:chat/registry system)})
+
+;; (m/validate
+;;  (m/form
+;;   (:chat/logic system)
+;;   {:registry (:chat/registry system)}
+;;   )
+;;  {})
