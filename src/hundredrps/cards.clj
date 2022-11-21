@@ -258,6 +258,19 @@
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
+(defn eval-update
+  [ctx chat-logic]
+  (let [a :b
+        [_ [actions parsed-ctx]] (chat-logic ctx)]
+    (reduce #(perform-action %1 %2) parsed-ctx #p actions)))
+
+(defn prepare-chat-context
+  [update chat-state chat-id]
+  {:messages []
+   :data     {:chat-id chat-id}
+   :update   update
+   :state    chat-state})
+
 (defn process-update-new
   [ctx update]
   (let [db (:db/value ctx)
