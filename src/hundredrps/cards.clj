@@ -306,6 +306,8 @@
     (assoc ctx :response (msg->http-response (first messages)))
     ctx))
 
+(defmethod perform-action :noop [ctx _] ctx)
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
