@@ -333,6 +333,17 @@
 
 (defmethod perform-action :noop [ctx _] ctx)
 
+(defmethod perform-action :prepare-data
+  [{:chat/keys [registry] :as ctx} {:keys [parse-schema-name]}]
+  (let [card          (keyword (namespace parse-schema-name))
+        parser        (m/parser parse-schema-name {:registry registry})
+        prepared-data (-> (get-in ctx [:state :values])
+                          values->raw-data
+                          card
+                          parser
+                          lift-up-data)]
+    (assoc-in ctx [:prepared-data] prepared-data)))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
@@ -348,7 +359,7 @@
 (defn prepare-chat-context
   [ctx update chat-state]
   (merge
-   (select-keys ctx [:tg/api-url :tg/file-url])
+   (select-keys ctx [:tg/api-url :tg/file-url :chat/registry])
    {:messages []
     :data     {:chat-id (tg/get-chat-id update)}
     :update   update
