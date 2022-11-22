@@ -3,6 +3,7 @@
    [clojure.java.io :as io]
    [hundredrps.tg :as tg]
    [hundredrps.text :as text]
+   [hundredrps.utils :as utils]
    [jsonista.core :as j]
    [malli.core :as m]
    [malli.registry :as mr]
@@ -60,7 +61,7 @@
 ;; https://github.com/metosin/malli#built-in-schemas
 
 (defn get-file [{:tg/keys [api-url file-url]} file-id]
-  "Takes `api-url` and `file-id` and return `BufferedInputStream`."
+  "Takes `api-url` and `file-id` and return `ByteArray`."
   (->
    (async-call api-url {:method "getFile" :file_id file-id})
    deref
@@ -68,9 +69,10 @@
    :result :file_path
 
    (#(str file-url "/" %))
-   (http/get {:as :byte-array})
+   (http/get {:as :byte-array}) ;; coersion doesn't work
    deref
-   :body))
+   :body
+   utils/load-file-as-byte-array))
 
 (defn values->pdf-data
   "Generates data for pdf from values extracted from tg updates."
