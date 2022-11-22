@@ -162,6 +162,33 @@
                    :message ~msg
                    :type (if is-valid?# :pass :fail)})))
 
+(def raw-values-01-new
+  {805 {:step nil, :value "/start"},
+   832 {:step [:letter-for-mother :live-together?], :value "Раздельно"},
+   836 {:step [:letter-for-mother :sibling], :value "От сына"},
+   850 {:step  [:letter-for-mother :photo-with-mom],
+        :value [{:file_id        "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADcwADKwQ",
+                 :file_size      1386,
+                 :file_unique_id "AQADCr4xG-BnoEp4",
+                 :height         82,
+                 :width          90}
+                {:file_id        "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADbQADKwQ",
+                 :file_size      9735,
+                 :file_unique_id "AQADCr4xG-BnoEpy",
+                 :height         291,
+                 :width          320}
+                {:file_id        "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADeAADKwQ",
+                 :file_size      18397,
+                 :file_unique_id "AQADCr4xG-BnoEp9",
+                 :height         533,
+                 :width          587}]},
+   852 {:step [:letter-for-mother :what-mom-cooked], :value "ho"},
+   854 {:step [:letter-for-mother :have-children?], :value "Нет"},
+   856 {:step  [:letter-for-mother :childhood-memories],
+        :value "childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much, almost 300 hundreds."},
+   858 {:step [:letter-for-mother :add-warm-memories?], :value "Да"},
+   860 {:step [:letter-for-mother :signature], :value "Best regards"}})
+
 (deftest letter-for-mother-new
   (testing "Dialog with photo and errors."
     (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
@@ -174,72 +201,18 @@
 
           update-context #(-> (cards/prepare-chat-context
                                system
-                               (get-in updates [%1])
-                               (:state %2))
+                               %2
+                               (:state %1))
                               (cards/eval-update chat-logic))]
       (with-fake-http [;; get-file-url {:body get-file-response}
                        ;; photo-url    {:body photo :status 200}
                        #"sendPhoto" {:status 200}
                        #"sendMessage" {:status 200}]
 
-        (def lfmn-hi (update-context 0 {:state {}}))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    [:map {:closed true}]} lfmn-hi))
+        (def new-context
+          (reduce update-context {:state {}} (take 20 updates)))
 
-        (def lfmn-o (update-context 1 lfmn-hi))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    [:map {:closed true}]} lfmn-o))
-
-        (def start (update-context 2 lfmn-o))
-        (is (validl {:messages [:vector {:min 3} :map]
-                     :state    {:step [:= [:start]]}} start))
-
-        (def lfmn-greeting (update-context 3 start))
-        (is (validl {:messages [:vector {:min 3} :map]
-                     :state    {:step [:= [:letter-for-mother :greeting]]}}
-                    lfmn-greeting))
-
-        (def lfmn-neponiatno (update-context 4 lfmn-greeting))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :greeting]]}}
-                    lfmn-neponiatno))
-
-        (def lfmn-poniatno (update-context 5 lfmn-neponiatno))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :live-together?]]}}
-                    lfmn-poniatno))
-
-        (def lfmn-hm (update-context 6 lfmn-poniatno))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :live-together?]]}}
-                    lfmn-hm))
-
-        (def lfmn-separate (update-context 7 lfmn-hm))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :sibling]]}}
-                    lfmn-separate))
-
-        (def lfmn-ochi (update-context 8 lfmn-separate))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :sibling]]}}
-                    lfmn-ochi))
-
-        (def lfmn-son (update-context 9 lfmn-ochi))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :photo-with-mom]]}}
-                    lfmn-son))
-
-        (def lfmn-helo (update-context 10 lfmn-son))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :photo-with-mom]]}}
-                    lfmn-helo))
-
-        (def lfmn-photo (update-context 11 lfmn-helo))
-        (is (validl {:messages [:vector {:min 1} :map]
-                     :state    {:step [:= [:letter-for-mother :what-mom-cooked]]}}
-                    lfmn-photo))
-        ;; (is (= values-01 values))
-        ))))
+        (is (= raw-values-01-new (get-in new-context [:state :values])))))))
 
 ;; (def system
 ;;   (ig/init (hundredrps.core/get-config)
