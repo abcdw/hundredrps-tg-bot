@@ -258,7 +258,8 @@
   [{:keys [update] :as ctx} {:keys [value-path]}]
   (assert-schema :telegram/update update)
   (assoc-in ctx [:state :values (tg/get-message-id (:update ctx))]
-            (get-in ctx value-path)))
+            {:step (get-in ctx [:state :step])
+             :value (get-in ctx value-path)}))
 
 (defmethod perform-action :save-text
   [ctx _]
