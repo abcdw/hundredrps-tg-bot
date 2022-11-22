@@ -274,7 +274,7 @@
   [{:keys [update] :as ctx} _]
   (assert-schema :telegram/update update)
   (->>
-   (some-> ctx :update :message :photo last)
+   (some-> ctx :update :message :photo)
    (assoc-in ctx [:data :photo])))
 
 (defmethod perform-action :extract-and-save-photo
