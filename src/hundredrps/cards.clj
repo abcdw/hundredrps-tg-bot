@@ -211,9 +211,7 @@
                      [[:menu (get-in config [:general :menu])]])
              (into [:orn])
              (#(conj % [:fallback (get-in config [:general :fallback])])))]
-    (m/parser transitions {:registry
-                           (mr/fast-registry
-                            (merge tg/registry registry))})))
+    (m/parser transitions {:registry registry})))
 
 (defn get-registry
   [config]
@@ -223,11 +221,13 @@
                         (map :schemas (or (some-> config :cards vals) []))))
         reg     (merge tg/registry schemas)]
     ;; A little bit of magic to check schemas compiles
-    (update-vals
-     schemas
-     #(-> (m/schema % {:registry reg})
-          (m/deref-all)
-          (m/form)))))
+    (doall
+      (update-vals
+       schemas
+       #(-> (m/schema % {:registry reg})
+            (m/deref-all)
+            (m/form))))
+    (mr/fast-registry reg)))
 
 (defmulti perform-action
   (fn [_ a] (:action a)))
