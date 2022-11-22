@@ -85,6 +85,24 @@
           ;; processed earlier
           {} (sort values)))
 
+(defn values->raw-data
+  [values]
+  (reduce (fn [acc [msg-id {:keys [step value]}]]
+            (assoc-in acc step value))
+          ;; Sort is needed to make sure that messages with lower id
+          ;; processed earlier
+          {} (sort values)))
+
+(defn lift-up-data
+  [data]
+  (update-vals data (fn [[p v]]
+                      (if (vector? p) (get-in v p) p))))
+
+(defn download-files
+  [ctx data files]
+  (let [download-file #(get-file ctx (:file_id %))]
+    (reduce #(update-in %1 %2 download-file) data files)))
+
 
 ;;; Chat
 
