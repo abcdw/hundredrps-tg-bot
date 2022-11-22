@@ -300,7 +300,7 @@
     (if send-messages-async? (future-call f) (f)))
   (assoc ctx :messages-sent? true))
 
-(defmethod perform-action :add-response-from-message
+(defmethod perform-action :make-response-from-message
   [{:keys [messages messages-sent?] :as ctx} _]
   (if (and (= 1 (count messages)) (not messages-sent?))
     (assoc ctx :response (msg->http-response (first messages)))
@@ -311,7 +311,7 @@
 
 (def default-actions
   ;; TODO: Move to chat config
-  [{:action :add-response-from-message}])
+  [{:action :make-response-from-message}])
 
 (defn eval-update
   [ctx chat-logic]
