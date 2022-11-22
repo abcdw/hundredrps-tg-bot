@@ -7,8 +7,9 @@
                    :text/templates  #ig/ref :text/templates
                    :cards/resources #ig/ref :cards/resources
 
-                   :chat/logic #ig/ref :chat/logic
-                   :db/value   #ig/ref :db/value}
+                   :chat/logic    #ig/ref :chat/logic
+                   :chat/registry #ig/ref :chat/registry
+                   :db/value      #ig/ref :db/value}
 
  :tg/api-token #env TELEGRAM_TOKEN
  :tg/api-url   {:base-url  "https://api.telegram.org/bot"
