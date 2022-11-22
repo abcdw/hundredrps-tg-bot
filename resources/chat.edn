@@ -5,11 +5,11 @@
 
  :menu
  [:orn
-  [[{:action :to-step :step [:start]}
-    {:action :add-multiple-messages :messages #ref [:messages :start]}
+  [[{:action :add-multiple-messages :messages #ref [:messages :start]}
     {:action :extract-text}
     {:action :save-text}
-    {:action :send-messages!}]
+    {:action :send-messages!}
+    {:action :to-step :step [:start]}]
    [:map [:update :menu/start]]]
 
   [[{:action :add-message :message #ref [:messages :stop]}
