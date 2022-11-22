@@ -2,6 +2,7 @@
   (:require
    [clojure.java.io :as io]
    [hundredrps.tg :as tg]
+   [hundredrps.text :as text]
    [jsonista.core :as j]
    [malli.core :as m]
    [malli.registry :as mr]
@@ -262,8 +263,11 @@
              :value (get-in ctx value-path)}))
 
 (defmethod perform-action :save-text
-  [ctx _]
-  (perform-action ctx {:action :save-value :value-path [:data :text]}))
+  [ctx {:keys [cleanup-unicode?] :or {cleanup-unicode? true}}]
+  (cond-> ctx
+    cleanup-unicode? (update-in [:data :text] text/remove-some-unicode-symbols)
+
+    true (perform-action {:action :save-value :value-path [:data :text]})))
 
 (defmethod perform-action :extract-and-save-text
   [ctx _]
