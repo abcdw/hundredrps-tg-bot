@@ -346,6 +346,18 @@
                           lift-up-data)]
     (assoc-in ctx [:prepared-data] prepared-data)))
 
+(defmethod perform-action :download-file!
+  [ctx {:keys [path]}]
+  (download-files ctx ctx [path]))
+
+(defmethod perform-action :map-data
+  [ctx {:keys [mappings]}]
+  (reduce
+   (fn [acc [from to]]
+     (->> (get-in acc from)
+          (assoc-in acc to)))
+   ctx mappings))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
