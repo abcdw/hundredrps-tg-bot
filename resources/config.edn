@@ -1,11 +1,14 @@
 {:http/server     {:port    #long #or [#env PORT 8080]
                    :handler #ig/ref :handler/webhook}
- :handler/webhook {:tg/api-url      #ig/ref :tg/api-url
-                   :tg/file-url     #ig/ref :tg/file-url
+ :handler/webhook {:tg/api-url  #ig/ref :tg/api-url
+                   :tg/file-url #ig/ref :tg/file-url
+
                    :pdf/templates   #ig/ref :pdf/templates
                    :pdf/cards       #ig/ref :pdf/cards
                    :text/templates  #ig/ref :text/templates
                    :cards/resources #ig/ref :cards/resources
+                   ;; TODO: Remove unecessary deps from webhook
+                   :pdf/generator   #ig/ref :pdf/generator
 
                    :payment/config #ig/ref :payment/config
 
@@ -16,6 +19,11 @@
                    :chat/logic    #ig/ref :chat/logic
                    :chat/registry #ig/ref :chat/registry
                    :db/value      #ig/ref :db/value}
+
+ :pdf/generator {:pdf/templates   #ig/ref :pdf/templates
+                 :pdf/cards       #ig/ref :pdf/cards
+                 :text/templates  #ig/ref :text/templates
+                 :cards/resources #ig/ref :cards/resources}
 
  :tg/api-token #env TELEGRAM_TOKEN
  :tg/api-url   {:base-url  "https://api.telegram.org/bot"

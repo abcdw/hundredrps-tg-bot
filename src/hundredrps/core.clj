@@ -5,6 +5,7 @@
    [clojure.java.io :as io]
    [hundredrps.cards :as cards]
    [hundredrps.tg :as tg]
+   [hundredrps.pdf :as pdf]
    [hundredrps.utils :as utils]
    [integrant.core :as ig]
    [org.httpkit.client :as http]
@@ -102,6 +103,9 @@
   (cards/prepare-chat-logic config registry))
 
 (defmethod ig/init-key :payment/config [_ val] val)
+
+(defmethod ig/init-key :pdf/generator [_ val]
+  (fn [data card] (pdf/generate-pdf val data card)))
 
 (defn get-config
   "Read integrant system description from config.edn."

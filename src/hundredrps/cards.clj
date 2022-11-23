@@ -400,7 +400,8 @@
     (reduce #(perform-action %1 %2) ctx (into actions default-actions))))
 
 (def keys-to-forward-to-chat-context
-  [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?])
+  [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
+   :pdf/generator])
 
 (defn prepare-chat-context
   [ctx update chat-state]
