@@ -59,12 +59,36 @@
      [:map [:message :telegram/message]]
      [:map [:edited_message :telegram/edited_message]]]
 
-    :tg/outgoing-text [:map [:text :string]]
+    :telegram/chat-id [:or :int :string]
+    :telegram/labeled-price [:map
+                             [:label :string]
+                             [:amount :int]]
 
-    :tg/outgoing-photo [:map [:photo :string]]
+    :telegram/send-message [:map [:text :string]]
+    :telegram/send-photo [:map [:photo :string]]
+
+    :telegram/send-invoice
+    [:map
+     [:title :string]
+     [:description :string]
+     [:payload :string]
+     [:provider_token :string]
+     [:currency :string]
+     [:prices [:vector :telegram/labeled-price]]]
+
+    :telegram/answer-pre-checkout-query
+    [:map
+     [:pre_checkout_query_id :string]
+     [:ok :boolean]]
 
     :tg/outgoing-message
-    [:or :tg/outgoing-text :tg/outgoing-photo]
+    [:merge
+     [:map [:chat_id :telegram/chat-id]]
+     [:or
+      :telegram/send-message
+      :telegram/send-photo
+      :telegram/send-invoice
+      :telegram/answer-pre-checkout-query]]
 
     :tg/message-base [:map [:message_id :int]]
     :tg/text         [:merge :tg/message-base
