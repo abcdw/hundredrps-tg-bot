@@ -9,6 +9,9 @@
 
                    :payment/config #ig/ref :payment/config
 
+                   :amplitude/api-url   #ig/ref :amplitude/api-url
+                   :amplitude/api-token #ig/ref :amplitude/api-token
+
                    :chat/logic    #ig/ref :chat/logic
                    :chat/registry #ig/ref :chat/registry
                    :db/value      #ig/ref :db/value}
@@ -22,6 +25,9 @@
  :payment/config {:provider-token #or [#env PAYMENT_PROVIDER_TOKEN "test-token"]
                   :cost           199
                   :amount         #cost->amount #ref [:payment/config :cost]}
+
+ :amplitude/api-token #env AMPLITUDE_TOKEN
+ :amplitude/api-url   "https://api.amplitude.com/2/httpapi"
 
  :db/value {:logic #include "logic.edn"}
  ;; TODO: Add payment provider token
