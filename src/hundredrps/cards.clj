@@ -350,7 +350,9 @@
 
 (defmethod perform-action :download-file!
   [ctx {:keys [path]}]
-  (download-files ctx ctx [path]))
+  (if (tg/file? (get-in ctx path))
+    (download-files ctx ctx [path])
+    ctx))
 
 (defmethod perform-action :map-data
   [ctx {:keys [mappings]}]
