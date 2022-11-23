@@ -377,6 +377,13 @@
       (analytics/send-analytics ctx chat-id step props)))
   ctx)
 
+(defmethod perform-action :format-string
+  [ctx {:keys [path values-path values-keys]}]
+  (let [format-string (get-in ctx path)
+        format-values (get-in ctx values-path)
+        format-arguments ((apply juxt values-keys) format-values)]
+    (assoc-in ctx path (apply format format-string format-arguments))))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
