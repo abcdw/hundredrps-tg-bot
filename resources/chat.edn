@@ -6,6 +6,8 @@
  :menu
  [:orn
   [[{:action :add-multiple-messages :messages #ref [:messages :start]}
+    {:action :format-string :path [:messages 1 :text]
+     :values-path [:payment/config] :values-keys [:cost]}
     {:action :extract-text}
     {:action :save-text}
     {:action :send-messages!}
@@ -27,8 +29,6 @@
   [[{:action :add-message :message #ref [:messages :press-start]}]
    [:map [:update :telegram/update]]]]
 
- :card-cost 199
-
  :messages
  {:press-start
   {:text         "Ого, вы не нажали /start, нажимайте скорее!"
@@ -45,10 +45,7 @@
       [{:text "Как выглядит «Письмо о любви»"
         :url  "https://disk.yandex.ru/i/dC_kJTF4sixzRQ"}]]}}
    {:text
-    #join
-    ["Стоимость услуги " #ref [:card-cost]
-     " ₽. Если у вас остались вопросы или что-то не сработает, "
-     "пишите нам @cardsandcare"]}
+    "Стоимость услуги %s ₽. Если у вас остались вопросы или что-то не сработает, пишите нам @cardsandcare"}
    {:reply_markup {:remove_keyboard true}
     :text
     "Выберите откытку:
