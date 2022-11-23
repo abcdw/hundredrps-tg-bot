@@ -1,9 +1,11 @@
 (ns hundredrps.cards
   (:require
    [clojure.java.io :as io]
+   [clojure.string]
    [hundredrps.tg :as tg]
    [hundredrps.text :as text]
    [hundredrps.utils :as utils]
+   [hundredrps.analytics :as analytics]
    [jsonista.core :as j]
    [malli.core :as m]
    [malli.registry :as mr]
@@ -358,12 +360,30 @@
           (assoc-in acc to)))
    ctx mappings))
 
+(defn get-start-parameter
+  [text]
+  (clojure.string/replace text #"/start\s*" ""))
+
+(defmethod perform-action :send-analytics!
+  [{:analytics/keys [enabled?]
+    {:keys [chat-id step]} :data
+    :as ctx} _]
+  (when enabled?
+    (let [maybe-text (get-in ctx [:update :message :text])
+          start-regex #"/start.*"
+          props (if (and maybe-text (re-find start-regex maybe-text))
+                  {:start (get-start-parameter maybe-text)}
+                  {})]
+      (analytics/send-analytics ctx chat-id step props)))
+  ctx)
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
 (def default-actions
   ;; TODO: Move to chat config
-  [{:action :make-response-from-message}])
+  [{:action :make-response-from-message}
+   {:action :send-analytics!}])
 
 (defn eval-update
   [ctx chat-logic]
@@ -371,7 +391,7 @@
     (reduce #(perform-action %1 %2) ctx (into actions default-actions))))
 
 (def keys-to-forward-to-chat-context
-  [:tg/api-url :tg/file-url :chat/registry :payment/config])
+  [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?])
 
 (defn prepare-chat-context
   [ctx update chat-state]
