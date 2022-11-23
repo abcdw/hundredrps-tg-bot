@@ -229,7 +229,7 @@
 
 (deftest letter-for-mother-new
   (testing "Dialog with photo and errors."
-    (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
+    (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors-new.edn"
                      io/resource io/file slurp read-string))
     (let [system (ig/init (hundredrps.core/get-config)
                           [:chat/logic :chat/registry

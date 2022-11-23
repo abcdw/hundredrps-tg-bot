@@ -1,0 +1,419 @@
+[{:update_id 961354507,
+  :message
+  {:date 1668501002,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 801,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "hi"}}
+ {:update_id 961354508,
+  :message
+  {:date 1668501006,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 803,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "o"}}
+ {:update_id 961354509,
+  :message
+  {:date 1668501011,
+   :entities [{:offset 0, :type "bot_command", :length 6}],
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 805,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "/start"}}
+ {:update_id 961354510,
+  :message
+  {:date 1668501016,
+   :entities [{:offset 0, :type "bot_command", :length 16}],
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 809,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "/letterForMother"}}
+ {:update_id 961354511,
+  :message
+  {:date 1668501025,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 813,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "neponiatno"}}
+ {:update_id 961354512,
+  :message
+  {:date 1668501227,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 815,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Понятно"}}
+ {:update_id 961354519,
+  :message
+  {:date 1668502332,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 830,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "hm"}}
+ {:update_id 961354520,
+  :message
+  {:date 1668502336,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 832,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Раздельно"}}
+ {:update_id 961354521,
+  :message
+  {:date 1668502343,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 834,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "ochi"}}
+ {:update_id 961354522,
+  :message
+  {:date 1668502359,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 836,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "От сына"}}
+ {:update_id 961354526,
+  :message
+  {:date 1668503028,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 848,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "helo"}}
+ {:update_id 961354527,
+  :message
+  {:date 1668503041,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 850,
+   :photo
+   [{:width 90,
+     :file_size 1386,
+     :file_unique_id "AQADCr4xG-BnoEp4",
+     :file_id
+     "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADcwADKwQ",
+     :height 82}
+    {:width 320,
+     :file_size 9735,
+     :file_unique_id "AQADCr4xG-BnoEpy",
+     :file_id
+     "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADbQADKwQ",
+     :height 291}
+    {:width 587,
+     :file_size 18397,
+     :file_unique_id "AQADCr4xG-BnoEp9",
+     :file_id
+     "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADeAADKwQ",
+     :height 533}],
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"}}}
+ {:update_id 961354528,
+  :message
+  {:date 1668503270,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 852,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "ho"}}
+ {:update_id 961354529,
+  :message
+  {:date 1668503280,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 854,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Нет"}}
+ {:update_id 961354530,
+  :message
+  {:date 1668503367,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 856,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text
+   "childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much, almost 300 hundreds."}}
+ {:update_id 961354531,
+  :message
+  {:date 1668503374,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 858,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Да"}}
+ {:update_id 961354532,
+  :message
+  {:date 1668503382,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 860,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Best regards"}}
+ {:update_id 961354533,
+  :message
+  {:date 1668503397,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 862,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "ho"}}
+ {:update_id 961354534,
+  :message
+  {:date 1668503403,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 864,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "Всё окей!"}}
+ {:update_id 961354535,
+  :message
+  {:date 1668503419,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 866,
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :text "wo"}}
+ {:update_id 961354536,
+  :pre_checkout_query
+  {:invoice_payload "letter-for-mother",
+   :currency "RUB",
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"},
+   :id "290176954631500030",
+   :total_amount 19900}}
+ {:update_id 961354537,
+  :message
+  {:date 1668503584,
+   :chat
+   {:first_name "Andrew",
+    :username "andrewtropin",
+    :type "private",
+    :id 67562087,
+    :last_name "Tropin"},
+   :message_id 868,
+   :successful_payment
+   {:invoice_payload "letter-for-mother",
+    :telegram_payment_charge_id
+    "5792546741_67562087_878364_7166168099833235456",
+    :currency "RUB",
+    :total_amount 19900,
+    :provider_payment_charge_id
+    "2b056bde-000f-5000-a000-1a5aa228af9f"},
+   :from
+   {:first_name "Andrew",
+    :language_code "en",
+    :is_bot false,
+    :username "andrewtropin",
+    :id 67562087,
+    :last_name "Tropin"}}}]
