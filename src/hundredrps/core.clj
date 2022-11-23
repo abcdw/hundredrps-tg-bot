@@ -104,8 +104,9 @@
 
 (defn get-config
   "Read integrant system description from config.edn."
-  []
-  (aero/read-config (io/resource "config.edn")))
+  ([] (get-config nil))
+  ([profile]
+   (aero/read-config (io/resource "config.edn") {:profile (or profile :dev)})))
 
 ;; TODO: Add text unicode cleanup tg:telega:@rus_garifullin#875070
 ;; translation: https://github.com/ptaoussanis/tempura
@@ -113,5 +114,5 @@
 (defn -main
   "Entry point."
   [& args]
-  (ig/init (get-config))
+  (ig/init (get-config :default))
   (println "hundredrps is on duty."))
