@@ -310,7 +310,6 @@
 
 (defmethod perform-action :add-message
   [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
-  (assert-schema :tg/outgoing-message message)
   (update ctx :messages conj (merge {:chat_id chat-id} message)))
 
 (defmethod perform-action :add-multiple-messages
@@ -321,6 +320,7 @@
 
 (defmethod perform-action :send-messages!
   [{:keys [messages send-messages-async?] :tg/keys [api-url] :as ctx} _]
+  (assert-schema [:vector :tg/outgoing-message] messages)
   (let [f (fn [] (doall (map #(deref (async-call api-url %)) messages)))]
     (if send-messages-async? (future-call f) (f)))
   (assoc ctx :messages-sent? true))
@@ -328,7 +328,9 @@
 (defmethod perform-action :make-response-from-message
   [{:keys [messages messages-sent?] :as ctx} _]
   (if (and (= 1 (count messages)) (not messages-sent?))
-    (assoc ctx :response (msg->http-response (first messages)))
+    (do
+      (assert-schema :tg/outgoing-message (first messages))
+      (assoc ctx :response (msg->http-response (first messages))))
     ctx))
 
 (defmethod perform-action :noop [ctx _] ctx)
