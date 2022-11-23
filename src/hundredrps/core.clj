@@ -88,6 +88,7 @@
 
 (defmethod ig/init-key :amplitude/api-token [_ val] val)
 (defmethod ig/init-key :amplitude/api-url [_ val] val)
+(defmethod ig/init-key :analytics/enabled? [_ val] val)
 
 (defmethod ig/init-key :handler/webhook [_ ctx]
   (cards/get-handler-new ctx))

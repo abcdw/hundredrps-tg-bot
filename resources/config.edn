@@ -11,6 +11,7 @@
 
                    :amplitude/api-url   #ig/ref :amplitude/api-url
                    :amplitude/api-token #ig/ref :amplitude/api-token
+                   :analytics/enabled?  #ig/ref :analytics/enabled?
 
                    :chat/logic    #ig/ref :chat/logic
                    :chat/registry #ig/ref :chat/registry
@@ -28,9 +29,10 @@
 
  :amplitude/api-token #env AMPLITUDE_TOKEN
  :amplitude/api-url   "https://api.amplitude.com/2/httpapi"
+ :analytics/enabled?  #profile {:dev     false
+                                :default true}
 
  :db/value {:logic #include "logic.edn"}
- ;; TODO: Add payment provider token
 
  :chat/config
  {:general #include "chat.edn"
