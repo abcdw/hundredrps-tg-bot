@@ -258,7 +258,7 @@
   (assoc-in ctx [:state :step] step))
 
 (defmethod perform-action :clear-state
-  [ctx {:keys [step]}]
+  [ctx _]
   (assoc-in ctx [:state] {}))
 
 (defmacro assert-schema
@@ -279,7 +279,7 @@
   [{:keys [update] :as ctx} {:keys [value-path]}]
   (assert-schema :telegram/update update)
   (assoc-in ctx [:state :values (tg/get-message-id (:update ctx))]
-            {:step (get-in ctx [:state :step])
+            {:step (get-in ctx [:data :step])
              :value (get-in ctx value-path)}))
 
 (defmethod perform-action :save-text
@@ -378,7 +378,8 @@
   (merge
    (select-keys ctx keys-to-forward-to-chat-context)
    {:messages []
-    :data     {:chat-id (tg/get-chat-id update)}
+    :data     {:chat-id (tg/get-chat-id update)
+               :step    (get-in chat-state [:step])}
     :update   update
     :state    chat-state}))
 
