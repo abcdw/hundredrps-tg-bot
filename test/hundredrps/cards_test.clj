@@ -232,8 +232,9 @@
     (def updates (-> "assets/01-letter-for-mother-with-photos-and-errors-new.edn"
                      io/resource io/file slurp read-string))
     (let [system (ig/init (hundredrps.core/get-config)
-                          [:chat/logic :chat/registry
-                           :tg/api-url :tg/file-url])
+                          (conj
+                           cards/keys-to-forward-to-chat-context
+                           :chat/logic))
 
           {:chat/keys [registry]
            :tg/keys   [api-url file-url]} system
@@ -250,8 +251,7 @@
 
           photo (-> "assets/01photo.jpg"
                     io/resource
-                    io/file
-                    io/input-stream)
+                    io/file)
 
           update-context #(-> (cards/prepare-chat-context
                                system
@@ -264,7 +264,7 @@
                        #"sendMessage" {:status 200}]
 
         (def new-context
-          (reduce update-context {:state {}} (take 17 updates)))
+          (reduce update-context {:state {}} (take 22 updates)))
 
         (is (= raw-values-01-new (get-in new-context [:state :values])))
 
