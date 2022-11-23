@@ -97,11 +97,15 @@
 (defmethod ig/init-key :chat/logic [_ {:chat/keys [config registry] :as ctx}]
   (cards/prepare-chat-logic config registry))
 
+(defmethod ig/init-key :payment/config [_ val] val)
 
 (defn get-config
   "Read integrant system description from config.edn."
   []
   (aero/read-config (io/resource "config.edn")))
+
+;; TODO: Add text unicode cleanup tg:telega:@rus_garifullin#875070
+;; translation: https://github.com/ptaoussanis/tempura
 
 (defn -main
   "Entry point."

@@ -358,10 +358,13 @@
   (let [[_ [actions parsed-ctx]] (chat-logic ctx)]
     (reduce #(perform-action %1 %2) ctx (into actions default-actions))))
 
+(def keys-to-forward-to-chat-context
+  [:tg/api-url :tg/file-url :chat/registry :payment/config])
+
 (defn prepare-chat-context
   [ctx update chat-state]
   (merge
-   (select-keys ctx [:tg/api-url :tg/file-url :chat/registry])
+   (select-keys ctx keys-to-forward-to-chat-context)
    {:messages []
     :data     {:chat-id (tg/get-chat-id update)}
     :update   update

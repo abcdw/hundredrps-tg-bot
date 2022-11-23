@@ -7,6 +7,8 @@
                    :text/templates  #ig/ref :text/templates
                    :cards/resources #ig/ref :cards/resources
 
+                   :payment/config #ig/ref :payment/config
+
                    :chat/logic    #ig/ref :chat/logic
                    :chat/registry #ig/ref :chat/registry
                    :db/value      #ig/ref :db/value}
@@ -16,7 +18,12 @@
                 :api-token #ig/ref :tg/api-token}
  :tg/file-url  {:base-url  "https://api.telegram.org/file/bot"
                 :api-token #ig/ref :tg/api-token}
- :db/value     {:logic #include "logic.edn"}
+
+ :payment/config {:provider-token #or [#env PAYMENT_PROVIDER_TOKEN "test-token"]
+                  :cost           199
+                  :amount         #cost->amount #ref [:payment/config :cost]}
+
+ :db/value {:logic #include "logic.edn"}
  ;; TODO: Add payment provider token
 
  :chat/config
