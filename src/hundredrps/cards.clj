@@ -364,7 +364,7 @@
   [text]
   (clojure.string/replace text #"/start\s*" ""))
 
-(defmethod perform-action :send-analytics!
+(defmethod perform-action :send-analytics-async!
   [{:analytics/keys [enabled?]
     {:keys [chat-id step]} :data
     :as ctx} _]
@@ -383,7 +383,7 @@
 (def default-actions
   ;; TODO: Move to chat config
   [{:action :make-response-from-message}
-   {:action :send-analytics!}])
+   {:action :send-analytics-async!}])
 
 (defn eval-update
   [ctx chat-logic]
