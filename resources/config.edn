@@ -43,22 +43,22 @@
  :cards/resources
  {:fonts   #cards/resource-dir "cards/fonts"
   :pdfs    {:letter-for-mother #cards/resource-dir "cards/letter-for-mother/pdfs"
-            :best-woman #cards/resource-dir "cards/best-woman/pdfs"
-            :valentine #cards/resource-dir "cards/valentine/pdfs"}
+            :best-woman        #cards/resource-dir "cards/best-woman/pdfs"
+            :valentine         #cards/resource-dir "cards/valentine/pdfs"}
   :strings {:letter-for-mother #include "cards/letter-for-mother/strings.edn"
-            :best-woman #include "cards/best-woman/strings.edn"
-            :valentine #include "cards/valentine/strings.edn"}}
+            :best-woman        #include "cards/best-woman/strings.edn"
+            :valentine         #include "cards/valentine/strings.edn"}}
 
  :text/templates
  {:letter-for-mother #include "cards/letter-for-mother/texts.edn"
-  :best-woman #include "cards/best-woman/texts.edn"
-  :valentine #include "cards/valentine/texts.edn"}
+  :best-woman        #include "cards/best-woman/texts.edn"
+  :valentine         #include "cards/valentine/texts.edn"}
 
  :pdf/templates
  {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"
-  :best-woman #include "cards/best-woman/pdfs.edn"
-  :valentine #include "cards/valentine/pdfs.edn"}
+  :best-woman        #include "cards/best-woman/pdfs.edn"
+  :valentine         #include "cards/valentine/pdfs.edn"}
  :pdf/cards
  {:letter-for-mother #include "cards/letter-for-mother/card.edn"
-  :best-woman #include "cards/best-woman/card.edn"
-  :valentine #include "cards/valentine/card.edn"}}
+  :best-woman        #include "cards/best-woman/card.edn"
+  :valentine         #include "cards/valentine/card.edn"}}
