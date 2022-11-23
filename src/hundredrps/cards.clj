@@ -1,15 +1,14 @@
 (ns hundredrps.cards
   (:require
-   [clojure.java.io :as io]
    [clojure.string]
-   [hundredrps.tg :as tg]
-   [hundredrps.text :as text]
-   [hundredrps.utils :as utils]
    [hundredrps.analytics :as analytics]
+   [hundredrps.image :as image]
+   [hundredrps.text :as text]
+   [hundredrps.tg :as tg]
+   [hundredrps.utils :as utils]
    [jsonista.core :as j]
    [malli.core :as m]
    [malli.registry :as mr]
-   [malli.util :as mu]
    [org.httpkit.client :as http]))
 
 
@@ -385,6 +384,25 @@
         format-values (get-in ctx values-path)
         format-arguments ((apply juxt values-keys) format-values)]
     (assoc-in ctx path (apply format format-string format-arguments))))
+
+(defmethod perform-action :is-photo-vertical?
+  [ctx {:keys [path result-path] :or {result-path [:data :result]}}]
+  (let [img       (get-in ctx path)
+        vertical? (when img (image/vertical? img))]
+    (assoc-in ctx result-path vertical?)))
+
+(defmethod perform-action :send-pdf!
+  [{{[card _] :step :keys [chat-id]} :data
+    :keys [prepared-data]
+    :pdf/keys [generator]
+    :tg/keys [api-url]
+    :as ctx}
+   _]
+
+  (let [pdf-bytes (generator prepared-data card)]
+    ;; (.write (io/output-stream (io/file "new.pdf")))
+    (send-pdf api-url {:file pdf-bytes :chat_id chat-id})
+    ctx))
 
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)

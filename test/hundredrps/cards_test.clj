@@ -260,6 +260,7 @@
                               (cards/eval-update chat-logic))]
       (with-fake-http [get-file-url {:body get-file-response}
                        photo-url    {:body photo :status 200}
+                       #"sendDocument" {:status 200}
                        #"sendPhoto" {:status 200}
                        #"sendMessage" {:status 200}]
 
