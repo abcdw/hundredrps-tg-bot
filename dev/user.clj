@@ -31,7 +31,8 @@
       emulate-requests))
 
 (def updates
-  (-> "assets/00-letter-for-mother.edn"
+  (-> ;; "assets/00-letter-for-mother.edn"
+      "assets/01-letter-for-mother-with-photos-and-errors-new.edn"
       io/resource io/file slurp read-string))
 
 (defn to-request
@@ -39,13 +40,13 @@
   {:body (j/write-value-as-string upd)})
 
 (def url
-  "http://hundredrps.project.trop.in:50080"
-  ;; "http://localhost:8080"
+  ;; "http://hundredrps.project.trop.in:50080"
+  "http://localhost:8080"
   )
 
 (defn make-async-request
-  [upd]
-  (http/post url (to-request upd)))
+  [upd & [callback]]
+  (http/post url (to-request upd) callback))
 
 (defn get-updates-series [_]
   (let [new-id (rand-int 5000)]
@@ -56,9 +57,55 @@
              (assoc-in [:pre_checkout_query :from :id] new-id))
           updates)))
 
+(defn make-consequent-async
+  [updates]
+  ;; (println "running cons requsets")
+  ((reduce
+    (fn [acc x]
+      (fn [_] (make-async-request x acc)))
+    (fn [_]
+      ;; (println "series complete")
+      "heh")
+    (reverse updates)) {}))
+
+(defn make-arbitrary-async
+  [updates]
+  ;; (println "running arbit requsets")
+  (doall (map make-async-request updates)))
+
+(defn load-test
+  [{:keys [waves-count series-count consequent-percent]}]
+  (dotimes [n waves-count] ; waves count
+    (println "sending wave " n)
+    (Thread/sleep 500)
+    (dotimes [i series-count]
+      (future
+        (if (< consequent-percent (rand-int 100))
+          (make-arbitrary-async (get-updates-series {}))
+          (make-consequent-async (get-updates-series {})))))))
+
+(comment
+  (load-test {:waves-count        10
+              :series-count       5 ;; ~burst (22 request per series)
+              :consequent-percent 100})
+  (load-test {:waves-count (* (* 60 2) 1) ;; ~time seconds/2
+              :series-count 20 ;; ~burst (22 request per series)
+              :consequent-percent 20 ;; ~generated pdfs
+              }))
+;; 12:03
+;; 14:04
+;; 105582
+
+;; 8800
+;; 8:57
+;; 41000
+;; 9:29
+
+
 (defn reset []
   (integrant.repl/reset)
-  (pass-letter-for-mother))
+  ;; (pass-letter-for-mother)
+  )
 
 (defn persist-updates [file]
   (spit (io/resource file)
@@ -67,16 +114,35 @@
            (get-in (get-db) [67562087 :state :updates])))))
 
 (comment
+  (-> integrant.repl.state/system :chat/registry)
+
+  (def file-to-send (io/file "new.pdf"))
+  (def req
+    (cards/send-pdf (:tg/api-url integrant.repl.state/system)
+                    {:file    file-to-send
+                     :chat-id 67562087}))
   (persist-updates "assets/01-letter-for-mother-with-photos-and-errors.edn")
-  (let [series-count 50]
-    (dotimes [n 40]
-      (Thread/sleep 500)
-      (time
-       (doall
-        (map make-async-request
-             (apply concat
-                    (map get-updates-series (range series-count))))))))
+
   (pass-letter-for-mother)
+
+  (def file-request-cache
+    @(cards/async-call
+      (:tg/api-url integrant.repl.state/system)
+      {:method  "getFile"
+       :file_id "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADeAADKwQ"}))
+
+  (def photo-url
+    (-> file-request-cache
+        :body
+        (j/read-value j/keyword-keys-object-mapper)
+        :result :file_path
+        (#(str "https://api.telegram.org/file/bot"
+               (:tg/token integrant.repl.state/system) "/" %))))
+
+  (def photo (cards/get-file
+              (:tg/token integrant.repl.state/system)
+              "AgACAgIAAxkBAAIDUmNzVgEeORTZ9Rh7MXK6rwRdWEHQAAIKvjEb4GegSmP7vfyjBNwiAQADAgADeAADKwQ"))
+
   @(cards/async-call
     (:tg/token integrant.repl.state/system)
     {:method         "sendInvoice"
