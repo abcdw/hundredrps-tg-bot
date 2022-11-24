@@ -321,10 +321,11 @@
           ctx messages))
 
 (defmethod perform-action :send-messages!
-  [{:keys [messages send-messages-async?] :tg/keys [api-url] :as ctx} _]
+  [{:keys [messages send-messages-async? silent?] :tg/keys [api-url] :as ctx} _]
   (assert-schema [:vector :tg/outgoing-message] messages)
   (let [f (fn [] (doall (map #(deref (async-call api-url %)) messages)))]
-    (if send-messages-async? (future-call f) (f)))
+    (when-not silent?
+      (if send-messages-async? (future-call f) (f))))
   (assoc ctx :messages-sent? true))
 
 (defmethod perform-action :make-response-from-message
@@ -394,7 +395,7 @@
 
 (defmethod perform-action :send-pdf!
   [{{[card _] :step :keys [chat-id]} :data
-    :keys [prepared-data]
+    :keys [prepared-data silent?]
     :pdf/keys [generator]
     :tg/keys [api-url]
     :as ctx}
@@ -402,7 +403,8 @@
 
   (let [pdf-bytes (generator prepared-data card)]
     ;; (.write (io/output-stream (io/file "new.pdf")))
-    (send-pdf api-url {:file pdf-bytes :chat_id chat-id})
+    (when-not silent?
+        (send-pdf api-url {:file pdf-bytes :chat_id chat-id}))
     ctx))
 
 ;; TODO: check config uses correct actions
@@ -426,7 +428,7 @@
 
 (def keys-to-forward-to-chat-context
   [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
-   :pdf/generator])
+   :pdf/generator :silent?])
 
 (defn prepare-chat-context
   [ctx update chat-state]
