@@ -182,7 +182,7 @@
                  :file_unique_id "AQADCr4xG-BnoEp9",
                  :height         533,
                  :width          587}]},
-   852 {:step [:letter-for-mother :what-mom-cooked], :value "ho"},
+   852 {:step [:letter-for-mother :what-mom-cooked], :value "moho   lho"},
    854 {:step [:letter-for-mother :have-children?], :value "Нет"},
    856 {:step  [:letter-for-mother :childhood-memories],
         :value "childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much childhood memories here wery long to check that it wraps correctly, but less than 300 hundreds of course, but not much, almost 300 hundreds."},
@@ -211,7 +211,7 @@
                          :width          587}],
    :sibling            "От сына",
    :signature          "Best regards",
-   :what-mom-cooked    "ho"})
+   :what-mom-cooked    "moho   lho"})
 
 (def parsed-data-01-new
   {:add-warm-memories? true,
@@ -225,7 +225,7 @@
                         :width          587},
    :sibling            :son,
    :signature          "Best regards",
-   :what-mom-cooked    "ho"})
+   :what-mom-cooked    "moho   lho"})
 
 (deftest letter-for-mother-new
   (testing "Dialog with photo and errors."
