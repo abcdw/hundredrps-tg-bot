@@ -339,9 +339,18 @@
 
 (defmethod perform-action :noop [ctx _] ctx)
 
+(defmethod perform-action :get-raw-data
+  [ctx _]
+  (let [card     (get-in ctx [:data :step 0])
+        raw-data (-> (get-in ctx [:state :values])
+                     values->raw-data
+                     card)]
+    (assoc-in ctx [:raw-data] raw-data)))
+
 (defmethod perform-action :prepare-data
   [{:chat/keys [registry] :as ctx} {:keys [parse-schema-name]}]
-  (let [card          (keyword (namespace parse-schema-name))
+  (let [;; can be obtained from step
+        card          (keyword (namespace parse-schema-name))
         parser        (m/parser parse-schema-name {:registry registry})
         prepared-data (-> (get-in ctx [:state :values])
                           values->raw-data
