@@ -407,6 +407,15 @@
         (send-pdf api-url {:file pdf-bytes :chat_id chat-id}))
     ctx))
 
+(defmethod perform-action :count
+  [ctx {:keys [path result-path] :or {result-path [:data :count]}}]
+  (assoc-in ctx result-path (count (get-in ctx path))))
+
+(defmethod perform-action :string-replace
+  [ctx {:keys [path match replacement]}]
+  (->> (clojure.string/replace (get-in ctx path) (re-pattern match) replacement)
+       (assoc-in ctx path)))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
