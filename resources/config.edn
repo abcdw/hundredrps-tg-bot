@@ -34,7 +34,7 @@
                 :api-token #ig/ref :tg/api-token}
 
  :payment/config {:provider-token #or [#env PAYMENT_PROVIDER_TOKEN "test-token"]
-                  :cost           199
+                  :cost           299
                   :amount         #cost->amount #ref [:payment/config :cost]}
 
  :amplitude/api-token #env AMPLITUDE_TOKEN
