@@ -416,6 +416,17 @@
   (->> (clojure.string/replace (get-in ctx path) (re-pattern match) replacement)
        (assoc-in ctx path)))
 
+(defmethod perform-action :assoc-in
+  [ctx {:keys [path value]}]
+  (assoc-in ctx path value))
+
+(defmethod perform-action :if
+  [ctx {:keys [result-path condition if-value-path else-value-path]
+        :or {result-path [:data :if]}}]
+  (assoc-in ctx result-path (if (m/validate condition ctx)
+                              (get-in ctx if-value-path)
+                              (get-in ctx else-value-path))))
+
 ;; TODO: check config uses correct actions
 ;; (m/validate (into [:enum] (keys (methods perform-action))) :add-message)
 
