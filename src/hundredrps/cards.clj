@@ -462,7 +462,7 @@
       (let [update (j/read-value body j/keyword-keys-object-mapper)
 
             response
-            (if (m/validate [:map [:update_id :int]] update
+            (if (m/validate :telegram/update update
                             {:registry tg/fast-registry})
               (process-update-new ctx update)
               {:status 400})]

@@ -55,9 +55,10 @@
     :telegram/edited_message :telegram/message
 
     :telegram/update
-    [:or
-     [:map [:message :telegram/message]]
-     [:map [:edited_message :telegram/edited_message]]]
+    [:map [:update_id :int]]
+    ;; [:or
+    ;;  [:map [:message :telegram/message]]
+    ;;  [:map [:edited_message :telegram/edited_message]]]
 
     :telegram/chat-id [:or :int :string]
     :telegram/labeled-price [:map
