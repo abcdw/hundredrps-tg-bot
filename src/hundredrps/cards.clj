@@ -39,7 +39,7 @@
     (http/post url request callback)))
 
 (defn send-pdf
-  [api-url & {:keys [name chat_id file] :or {name "card.pdf"}}]
+  [api-url & {:keys [name chat_id file callback] :or {name "card.pdf"}}]
   (http/request
    {:url          (str api-url "/sendDocument")
     :method       :post
@@ -47,7 +47,8 @@
     :multipart    [{:name         "document"
                     :filename     name
                     :content-type "application/pdf"
-                    :content      file}]}))
+                    :content      file}]}
+   callback))
 
 (defn deconstruct-update
   "Extract message, message-type and possible photo and text from
@@ -395,16 +396,21 @@
 
 (defmethod perform-action :send-pdf!
   [{{[card _] :step :keys [chat-id]} :data
-    :keys [prepared-data silent?]
-    :pdf/keys [generator]
-    :tg/keys [api-url]
-    :as ctx}
-   _]
 
-  (let [pdf-bytes (generator prepared-data card)]
+    :keys     [prepared-data silent?]
+    :pdf/keys [generator]
+    :tg/keys  [api-url]
+    :as       ctx}
+   {:keys [callback-message-path]}]
+  (let [pdf-bytes (generator prepared-data card)
+        cb-msg    (get-in ctx callback-message-path)
+        msg       (when (and callback-message-path cb-msg)
+                    (merge cb-msg {:chat_id chat-id}))
+        callback  (fn [_] (async-call api-url msg))]
     ;; (.write (io/output-stream (io/file "new.pdf")))
     (when-not silent?
-        (send-pdf api-url {:file pdf-bytes :chat_id chat-id}))
+      (send-pdf api-url {:file     pdf-bytes :chat_id chat-id
+                         :callback callback}))
     ctx))
 
 (defmethod perform-action :count
