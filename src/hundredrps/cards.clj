@@ -435,20 +435,26 @@
   [{:action :make-response-from-message}
    {:action :send-analytics-async!}])
 
+(def default-actions-verbose
+  ;; TODO: Move to chat config
+  [{:action :send-messages!}
+   {:action :send-analytics-async!}])
+
 (defn eval-update
-  [ctx chat-logic]
+  [{:keys [verbose?] :as ctx} chat-logic]
   (let [res (chat-logic ctx)]
     (if (= ::m/invalid res)
       (do
         (println "request is not parsed")
         (clojure.pprint/pprint ctx)
         ctx)
-      (let [[_ [actions parsed-ctx]] res]
-        (reduce #(perform-action %1 %2) ctx (into actions default-actions))))))
+      (let [[_ [actions parsed-ctx]] res
+            def-actions (if verbose? default-actions-verbose default-actions)]
+        (reduce #(perform-action %1 %2) ctx (into actions def-actions))))))
 
 (def keys-to-forward-to-chat-context
   [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
-   :pdf/generator :silent?])
+   :pdf/generator :silent? :verbose?])
 
 (defn prepare-chat-context
   [ctx update chat-state]
@@ -480,16 +486,21 @@
     response))
 
 (defn get-handler-new
-  "Returns a function, which process http requests.
-  `silent?` control if handler send messages at all it useful to setup
-  the needed state before testing. `verbose?` forces handler to reply
-  always with api call rather than return value to webhook."
-  [{:keys       [silent? verbose?]
-    :stats/keys [config]
+  "Returns a function, which process http requests."
+  [{:stats/keys [config]
     :as         ctx}]
   (let [stats (atom {:request-count 0})]
-    (fn [{:keys [body] :as request}]
+    (fn [{:keys [body query-string] :as request}]
+
+      ;; TODO: get silent? from query-params
       (let [update (j/read-value body j/keyword-keys-object-mapper)
+            ctx    (cond-> ctx
+                     (and query-string
+                          (clojure.string/includes? query-string "verbose"))
+                     (assoc :verbose? true)
+                     (and query-string
+                          (clojure.string/includes? query-string "silent"))
+                     (assoc :silent? true))
 
             response
             (if (m/validate :telegram/update update
