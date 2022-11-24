@@ -1,6 +1,7 @@
 (ns hundredrps.cards
   (:require
    [clojure.string]
+   [clojure.pprint]
    [hundredrps.analytics :as analytics]
    [hundredrps.image :as image]
    [hundredrps.text :as text]
@@ -414,8 +415,14 @@
 
 (defn eval-update
   [ctx chat-logic]
-  (let [[_ [actions parsed-ctx]] (chat-logic ctx)]
-    (reduce #(perform-action %1 %2) ctx (into actions default-actions))))
+  (let [res (chat-logic ctx)]
+    (if (= ::m/invalid res)
+      (do
+        (println "request is not parsed")
+        (clojure.pprint/pprint ctx)
+        ctx)
+      (let [[_ [actions parsed-ctx]] res]
+        (reduce #(perform-action %1 %2) ctx (into actions default-actions))))))
 
 (def keys-to-forward-to-chat-context
   [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
