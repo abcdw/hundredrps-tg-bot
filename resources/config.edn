@@ -51,10 +51,10 @@
                  :chat/registry #ig/ref :chat/registry}
 
  :cards/resources
- {:fonts   #cards/resource-dir "cards/fonts"
-  :pdfs    {:letter-for-mother #cards/resource-dir "cards/letter-for-mother/pdfs"
-            :best-woman        #cards/resource-dir "cards/best-woman/pdfs"
-            :valentine         #cards/resource-dir "cards/valentine/pdfs"}
+ {:fonts   "cards/fonts"
+  :pdfs    {:letter-for-mother "cards/letter-for-mother/pdfs"
+            :best-woman        "cards/best-woman/pdfs"
+            :valentine         "cards/valentine/pdfs"}
   :strings {:letter-for-mother #include "cards/letter-for-mother/strings.edn"
             :best-woman        #include "cards/best-woman/strings.edn"
             :valentine         #include "cards/valentine/strings.edn"}}

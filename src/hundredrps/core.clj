@@ -10,7 +10,9 @@
    [integrant.core :as ig]
    [org.httpkit.client :as http]
    [org.httpkit.server :as http-kit]
-   [malli.core :as m]))
+   [clojure.string]
+   [malli.core :as m])
+  (:import java.util.zip.ZipInputStream))
 
 (defn sum [a b]
   "Can be used for writing a simple test."
@@ -51,12 +53,38 @@
   [_ tag value]
   (* 100 value))
 
+;; (file-seq (io/file (io/resource "cards/fonts")))
+
+(defrecord HELPER [])
+
+(defn get-code-location []
+  (when-let [src (.getCodeSource (.getProtectionDomain HELPER))]
+    (.getLocation src)))
+
+(defn list-zip-contents [zip-location]
+  (with-open [zip-stream (ZipInputStream. (.openStream zip-location))]
+    (loop [dirs []]
+      (if-let [entry (.getNextEntry zip-stream)]
+        (recur (conj dirs (.getName entry)))
+        dirs))))
+
+(defn get-files-in-directory
+  [dir]
+  (if (= "jar" (.getProtocol (io/resource "config.edn")))
+    (some->> (get-code-location)
+             list-zip-contents
+             (remove #(clojure.string/ends-with? % "/"))
+             (filter #(clojure.string/starts-with? % dir)))
+    (map #(str dir "/" %) (seq (. (io/file (io/resource dir)) list)))))
+
 (defn load-files-from-dir
   "Load files into memory as byte-arrays."
   [dir]
-  (->> (seq (.listFiles (io/file (io/resource dir))))
-       (map (fn [x] [(keyword (.getName x))
-                     (utils/load-file-as-byte-array x)]))
+  (->> (get-files-in-directory dir)
+       (map (fn [x]
+              (let [res  (io/resource x)
+                    name (keyword (clojure.string/replace x #".*/" ""))]
+                [name (utils/load-file-as-byte-array res)])))
        (into {})))
 
 (defmethod aero/reader 'cards/resource-dir
@@ -79,7 +107,9 @@
 
 (defmethod ig/init-key :db/value [_ val] (atom {}))
 
-(defmethod ig/init-key :cards/resources [_ val] val)
+(defmethod ig/init-key :cards/resources [_ val]
+  (-> (update-in val [:fonts] load-files-from-dir)
+      (update-in [:pdfs] #(update-vals % load-files-from-dir))))
 
 (defmethod ig/init-key :pdf/templates [_ val] val)
 
