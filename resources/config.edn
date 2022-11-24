@@ -3,6 +3,8 @@
  :handler/webhook {:tg/api-url  #ig/ref :tg/api-url
                    :tg/file-url #ig/ref :tg/file-url
 
+                   :stats/config 10 ;; number of request before printing statistics
+
                    :pdf/templates   #ig/ref :pdf/templates
                    :pdf/cards       #ig/ref :pdf/cards
                    :text/templates  #ig/ref :text/templates

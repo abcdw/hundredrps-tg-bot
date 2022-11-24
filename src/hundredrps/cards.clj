@@ -462,8 +462,9 @@
   `silent?` control if handler send messages at all it useful to setup
   the needed state before testing. `verbose?` forces handler to reply
   always with api call rather than return value to webhook."
-  [{:keys    [silent? verbose?]
-    :as      ctx}]
+  [{:keys       [silent? verbose?]
+    :stats/keys [config]
+    :as         ctx}]
   (let [stats (atom {:request-count 0})]
     (fn [{:keys [body] :as request}]
       (let [update (j/read-value body j/keyword-keys-object-mapper)
@@ -473,5 +474,10 @@
                             {:registry tg/fast-registry})
               (process-update-new ctx update)
               {:status 400})]
+
+        (swap! stats update-in [:request-count] inc)
+        (when (= 0 (mod (:request-count @stats) config))
+          (swap! stats assoc-in [:user-count] (count @(:db/value ctx)))
+          (println @stats))
 
         response))))
