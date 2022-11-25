@@ -48,6 +48,30 @@
   [upd & [callback]]
   (http/post url (to-request upd) callback))
 
+(defn make-async-request-verbose
+  [upd & [callback]]
+  (http/post (str url "?verbose=true") (to-request upd) callback))
+
+(defn make-async-request-silent
+  [upd & [callback]]
+  (http/post (str url "?silent=true") (to-request upd) callback))
+
+(defn make-sync-request-verbose
+  [upd & [callback]]
+  @(http/post (str url "?verbose=true") (to-request upd) callback))
+
+(defn make-sync-request-silent
+  [upd & [callback]]
+  @(http/post (str url "?silent=true") (to-request upd) callback))
+
+(comment
+  (let [cnt 22]
+    (doall (map make-sync-request-silent (take (dec cnt) updates)))
+    (make-sync-request-verbose (get-in updates [(dec cnt)]))
+    ;; (doall (map make-sync-request-verbose (take (- (count updates) cnt) updates)))
+    ))
+
+
 (defn get-updates-series [_]
   (let [new-id (rand-int 5000)]
     (mapv #(cond-> %
