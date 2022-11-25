@@ -51,7 +51,7 @@
         url     (str api-url "/" method)
         request (-> x (dissoc :method) map->json-http-request)]
     (if file
-      (send-file api-url method #p {:chat_id  chat_id
+      (send-file api-url method {:chat_id  chat_id
                                  :file     file
                                  :filename filename} callback)
       (http/post url request callback))))
