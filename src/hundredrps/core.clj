@@ -20,6 +20,10 @@
 
 
 
+(defmethod aero/reader 'into
+  [_ tag [a b]]
+  (into a b))
+
 (defmethod aero/reader 'ig/ref
   [_ tag value]
   (ig/ref value))
