@@ -322,9 +322,9 @@
 
 (defmethod perform-action :send-messages!
   [{:keys [messages send-messages-async? silent?] :tg/keys [api-url] :as ctx} _]
-  (assert-schema [:vector :tg/outgoing-message] messages)
   (let [f (fn [] (doall (map #(deref (async-call api-url %)) messages)))]
     (when-not silent?
+      (assert-schema [:vector :tg/outgoing-message] messages)
       (if send-messages-async? (future-call f) (f))))
   (assoc ctx :messages-sent? true))
 
