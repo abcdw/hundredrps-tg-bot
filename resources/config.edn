@@ -72,7 +72,11 @@
  {:letter-for-mother #include "cards/letter-for-mother/pdfs.edn"
   :best-woman        #include "cards/best-woman/pdfs.edn"
   :valentine         #include "cards/valentine/pdfs.edn"}
+
  :pdf/cards
  {:letter-for-mother #include "cards/letter-for-mother/card.edn"
+  :letter-for-mother/photo-with-mom
+  #include "cards/letter-for-mother/photo-with-mom.edn"
+
   :best-woman        #include "cards/best-woman/card.edn"
   :valentine         #include "cards/valentine/card.edn"}}
