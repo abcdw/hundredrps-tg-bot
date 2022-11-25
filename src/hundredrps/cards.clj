@@ -404,13 +404,13 @@
     (assoc-in ctx result-path vertical?)))
 
 (defmethod perform-action :send-pdf!
-  [{{[card _] :step :keys [chat-id]} :data
+  [{{[default-card _] :step :keys [chat-id]} :data
 
-    :keys     [prepared-data silent?]
+    :keys     [prepared-data silent? send-messages-async?]
     :pdf/keys [generator]
     :tg/keys  [api-url]
     :as       ctx}
-   {:keys [callback-message-path]}]
+   {:keys [callback-message-path card] :or {card default-card}}]
   (let [pdf-bytes (generator prepared-data card)
         cb-msg    (get-in ctx callback-message-path)
         msg       (when (and callback-message-path cb-msg)
@@ -418,8 +418,12 @@
         callback  (fn [_] (async-call api-url msg))]
     ;; (.write (io/output-stream (io/file "new.pdf")))
     (when-not silent?
-      (send-pdf api-url {:file     pdf-bytes :chat_id chat-id
-                         :callback callback}))
+      (if send-messages-async?
+        (send-pdf api-url {:file     pdf-bytes :chat_id chat-id
+                           :callback callback})
+        (do
+          @(send-pdf api-url {:file     pdf-bytes :chat_id chat-id})
+          @(callback {}))))
     ctx))
 
 (defmethod perform-action :count
