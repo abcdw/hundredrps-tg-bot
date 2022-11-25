@@ -71,8 +71,9 @@
  :chat/config
  {:general #include "chat.edn"
   :cards   {:letter-for-mother #include "cards/letter-for-mother/chat.edn"
-            :best-woman        #include "cards/best-woman/chat.edn"
-            :valentine         #include "cards/valentine/chat.edn"}}
+            ;; :best-woman        #include "cards/best-woman/chat.edn"
+            ;; :valentine         #include "cards/valentine/chat.edn"
+            }}
 
  :chat/registry {:chat/config    #ig/ref :chat/config
                  :payment/config #ig/ref :payment/config}
