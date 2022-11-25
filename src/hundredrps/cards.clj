@@ -31,12 +31,30 @@
       map->json-http-request
       (assoc  :status 200)))
 
-(defn async-call [api-url x & [callback]]
-  (let [{:keys [method] :or {method "sendMessage"}} x
+(defn send-file
+  [api-url method {:keys [chat_id file filename]} & [callback]]
+  (http/request
+   {:url          (str api-url "/" method)
+    :method       :post
+    :query-params {"chat_id" chat_id}
+    :multipart    [{:name         ({"sendDocument" "document"
+                                    "sendPhoto"    "photo"} method)
+                    :filename     (or filename "1.jpg")
+                    :content-type ({"sendDocument" "application/pdf"
+                                    "sendPhoto"    "image/jpeg"} method)
+                    :content      file}]}
+   callback))
 
-        url (str api-url "/" method)
+(defn async-call [api-url x & [callback]]
+  (let [{:keys [method file filename chat_id] :or {method "sendMessage"}} x
+
+        url     (str api-url "/" method)
         request (-> x (dissoc :method) map->json-http-request)]
-    (http/post url request callback)))
+    (if file
+      (send-file api-url method #p {:chat_id  chat_id
+                                 :file     file
+                                 :filename filename} callback)
+      (http/post url request callback))))
 
 (defn send-pdf
   [api-url & {:keys [name chat_id file callback] :or {name "card.pdf"}}]
@@ -488,7 +506,7 @@
 
 (def keys-to-forward-to-chat-context
   [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
-   :pdf/generator :silent? :verbose?])
+   :pdf/generator :silent? :verbose? :cards/resources])
 
 (defn prepare-chat-context
   [ctx update chat-state]

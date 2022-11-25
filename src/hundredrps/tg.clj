@@ -66,7 +66,9 @@
                              [:amount :int]]
 
     :telegram/send-message [:map [:text :string]]
-    :telegram/send-photo [:map [:photo :string]]
+    :telegram/send-photo [:or
+                          [:map [:file [:not :nil]]]
+                          [:map [:photo :string]]]
 
     :telegram/send-invoice
     [:map
