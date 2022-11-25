@@ -412,7 +412,7 @@
     :pdf/keys [generator]
     :tg/keys  [api-url]
     :as       ctx}
-   {:keys [callback-message-path card] :or {card default-card}}]
+   {:keys [callback-message-path card filename] :or {card default-card}}]
   (let [pdf-bytes (generator prepared-data card)
         cb-msg    (get-in ctx callback-message-path)
         msg       (when (and callback-message-path cb-msg)
