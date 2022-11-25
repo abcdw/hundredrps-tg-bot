@@ -324,9 +324,10 @@
           ctx messages))
 
 (defmethod perform-action :send-messages!
-  [{:keys [messages send-messages-async? silent?] :tg/keys [api-url] :as ctx} _]
+  [{:keys [messages send-messages-async? silent? silent2?]
+    :tg/keys [api-url] :as ctx} _]
   (let [f (fn [] (doall (map #(deref (async-call api-url %)) messages)))]
-    (when-not silent?
+    (when-not (or silent? silent2?)
       (assert-schema [:vector :tg/outgoing-message] messages)
       (if send-messages-async? (future-call f) (f))))
   (assoc ctx :messages-sent? true))
@@ -408,23 +409,25 @@
 (defmethod perform-action :send-pdf!
   [{{[default-card _] :step :keys [chat-id]} :data
 
-    :keys     [prepared-data silent? send-messages-async?]
+    :keys     [prepared-data silent? silent2? send-messages-async?]
     :pdf/keys [generator]
     :tg/keys  [api-url]
     :as       ctx}
-   {:keys [callback-message-path card filename] :or {card default-card}}]
+   {:keys [callback-message-path card filename]
+    :or {card default-card filename "card.pdf"}}]
   (let [pdf-bytes (generator prepared-data card)
         cb-msg    (get-in ctx callback-message-path)
         msg       (when (and callback-message-path cb-msg)
                     (merge cb-msg {:chat_id chat-id}))
         callback  (fn [_] (async-call api-url msg))]
     ;; (.write (io/output-stream (io/file "new.pdf")))
-    (when-not silent?
+    (when-not (or silent? silent2?)
       (if send-messages-async?
         (send-pdf api-url {:file     pdf-bytes :chat_id chat-id
+                           :name     filename
                            :callback callback})
         (do
-          @(send-pdf api-url {:file     pdf-bytes :chat_id chat-id})
+          @(send-pdf api-url {:file pdf-bytes :name filename :chat_id chat-id})
           @(callback {}))))
     ctx))
 
