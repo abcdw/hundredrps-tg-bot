@@ -186,9 +186,10 @@
 (defn generate-pdf
   [system data card]
   (let [merger        (new PDFMergerUtility)
+        root-card     (or (keyword (namespace card)) card)
         card-rules    (-> system :pdf/cards card)
-        resources     (get-resources system card)
-        pdf-templates (-> system :pdf/templates card)
+        resources     (get-resources system root-card)
+        pdf-templates (-> system :pdf/templates root-card)
         card-parts    (get-matched-card-parts data card-rules)
         templates     (map pdf-templates card-parts)]
     (with-open [final-doc (new PDDocument)
@@ -197,7 +198,7 @@
       (doseq [template templates]
         (with-open [page (create-document
                           {:data      data
-                           :texts     (text/get-texts system data card)
+                           :texts     (text/get-texts system data root-card)
                            :resources resources}
                           template)]
 
