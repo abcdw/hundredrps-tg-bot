@@ -311,8 +311,11 @@
    (perform-action {:action :save-value :value-path [:data :photo]})))
 
 (defmethod perform-action :add-message
-  [{{:keys [chat-id]} :data :as ctx} {:keys [message]}]
-  (update ctx :messages conj (merge {:chat_id chat-id} message)))
+  [{{:keys [chat-id]} :data :as ctx} {:keys [message message-path-path]}]
+  (let [message (if message-path-path
+                  (get-in ctx (get-in ctx message-path-path))
+                  message)]
+    (update ctx :messages conj (merge {:chat_id chat-id} message))))
 
 (defmethod perform-action :add-multiple-messages
   [ctx {:keys [messages]}]
