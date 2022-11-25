@@ -238,8 +238,9 @@
     (m/parser transitions {:registry registry})))
 
 (defn get-registry
-  [config]
+  [config payment-config]
   (let [schemas (merge
+                 {:payment/free-ids (into [:enum] (:free-ids payment-config))}
                  (get-in config [:general :schemas])
                  (into {} (map :schemas (or (some-> config :cards vals) []))))
         reg     (merge tg/registry schemas)]

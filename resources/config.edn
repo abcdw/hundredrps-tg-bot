@@ -35,7 +35,8 @@
 
  :payment/config {:provider-token #or [#env PAYMENT_PROVIDER_TOKEN "test-token"]
                   :cost           299
-                  :amount         #cost->amount #ref [:payment/config :cost]}
+                  :amount         #cost->amount #ref [:payment/config :cost]
+                  :free-ids       #{283348608 235216590 1053707604 813089494}}
 
  :amplitude/api-token #env AMPLITUDE_TOKEN
  :amplitude/api-url   "https://api.amplitude.com/2/httpapi"
@@ -47,10 +48,11 @@
  :chat/config
  {:general #include "chat.edn"
   :cards   {:letter-for-mother #include "cards/letter-for-mother/chat.edn"
-            :best-woman #include "cards/best-woman/chat.edn"
-            :valentine #include "cards/valentine/chat.edn"}}
+            :best-woman        #include "cards/best-woman/chat.edn"
+            :valentine         #include "cards/valentine/chat.edn"}}
 
- :chat/registry {:chat/config #ig/ref :chat/config}
+ :chat/registry {:chat/config    #ig/ref :chat/config
+                 :payment/config #ig/ref :payment/config}
  :chat/logic    {:chat/config   #ig/ref :chat/config
                  :chat/registry #ig/ref :chat/registry}
 
@@ -78,5 +80,5 @@
   :letter-for-mother/photo-with-mom
   #include "cards/letter-for-mother/photo-with-mom.edn"
 
-  :best-woman        #include "cards/best-woman/card.edn"
-  :valentine         #include "cards/valentine/card.edn"}}
+  :best-woman #include "cards/best-woman/card.edn"
+  :valentine  #include "cards/valentine/card.edn"}}
