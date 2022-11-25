@@ -439,9 +439,10 @@
   (assoc-in ctx path value))
 
 (defmethod perform-action :if
-  [ctx {:keys [result-path condition if-value-path else-value-path]
-        :or {result-path [:data :if]}}]
-  (assoc-in ctx result-path (if (m/validate condition ctx)
+  [{:chat/keys [registry] :as ctx}
+   {:keys [result-path condition if-value-path else-value-path]
+    :or {result-path [:data :if]}}]
+  (assoc-in ctx result-path (if (m/validate condition ctx {:registry registry})
                               (get-in ctx if-value-path)
                               (get-in ctx else-value-path))))
 
