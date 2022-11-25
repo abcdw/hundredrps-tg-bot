@@ -241,8 +241,7 @@
   [config]
   (let [schemas (merge
                  (get-in config [:general :schemas])
-                 (apply into {}
-                        (map :schemas (or (some-> config :cards vals) []))))
+                 (into {} (map :schemas (or (some-> config :cards vals) []))))
         reg     (merge tg/registry schemas)]
     ;; A little bit of magic to check schemas compiles
     (doall
