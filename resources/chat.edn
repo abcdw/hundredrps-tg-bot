@@ -45,7 +45,11 @@
       [{:text "Как выглядит «Письмо о любви»"
         :url  "https://disk.yandex.ru/i/dC_kJTF4sixzRQ"}]]}}
    {:text
-    "Стоимость услуги %s ₽. Оплата происходит через ЮKassa с использованием банковских карт платежных систем: МИР, VISA International, Mastercard Worldwide, JCB. Если у вас остались вопросы или что-то не сработает, пишите нам @cardsandcare"}
+    "Стоимость услуги %s ₽. Оплата происходит через ЮKassa с использованием банковских карт платежных систем: МИР, VISA International, Mastercard Worldwide, JCB. Если у вас остались вопросы или что-то не сработает, пишите нам @cardsandcare"
+    :reply_markup
+    {:inline_keyboard
+     [[{:text "Публичная оферта"
+        :url  "https://docviewer.yandex.ru/?url=ya-disk-public%3A%2F%2Fs6j2jr781%2BbxjwMTZ2IDqVh3Cbp9PqPAufG6loNDkdiEirsRzMblbaJCpQVjYweZ%2Bb3nCKLCVTJ%2BSInaOUvvHQ%3D%3D&name=Public%20offer_bot.pdf"}]]}}
    {:reply_markup {:remove_keyboard true}
     :text
     "Выберите откытку:
