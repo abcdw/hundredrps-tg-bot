@@ -22,6 +22,29 @@
                    :chat/registry #ig/ref :chat/registry
                    :db/value      #ig/ref :db/value}
 
+ :tg/polling-future {:verbose?    true
+                     :tg/api-url  #ig/ref :tg/api-url
+                     :tg/file-url #ig/ref :tg/file-url
+
+                     :stats/config 10 ;; number of request before printing statistics
+
+                     :pdf/templates   #ig/ref :pdf/templates
+                     :pdf/cards       #ig/ref :pdf/cards
+                     :text/templates  #ig/ref :text/templates
+                     :cards/resources #ig/ref :cards/resources
+                     ;; TODO: Remove unecessary deps from webhook
+                     :pdf/generator   #ig/ref :pdf/generator
+
+                     :payment/config #ig/ref :payment/config
+
+                     :amplitude/api-url   #ig/ref :amplitude/api-url
+                     :amplitude/api-token #ig/ref :amplitude/api-token
+                     :analytics/enabled?  #ig/ref :analytics/enabled?
+
+                     :chat/logic    #ig/ref :chat/logic
+                     :chat/registry #ig/ref :chat/registry
+                     :db/value      #ig/ref :db/value }
+
  :pdf/generator {:pdf/templates   #ig/ref :pdf/templates
                  :pdf/cards       #ig/ref :pdf/cards
                  :text/templates  #ig/ref :text/templates

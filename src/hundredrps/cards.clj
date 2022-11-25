@@ -341,6 +341,14 @@
       (assoc ctx :response (msg->http-response (first messages))))
     ctx))
 
+(defmethod perform-action :send-one-message!
+  [{:keys [messages messages-sent?] :as ctx} _]
+  (if (and (= 1 (count messages)) (not messages-sent?))
+    (do
+      (assert-schema :tg/outgoing-message (first messages))
+      (perform-action ctx {:action :send-messages!}))
+    ctx))
+
 (defmethod perform-action :noop [ctx _] ctx)
 
 (defmethod perform-action :get-raw-data
@@ -463,7 +471,7 @@
 
 (def default-actions-verbose
   ;; TODO: Move to chat config
-  [{:action :send-messages!}
+  [{:action :send-one-message!}
    {:action :send-analytics-async!}])
 
 (defn eval-update
@@ -540,3 +548,24 @@
           (println @stats))
 
         response))))
+
+(defn get-updates
+  [{:tg/keys [api-url] :as ctx} update-id]
+  (->
+   @(async-call api-url {:offset update-id :method "getUpdates"})
+   :body
+   (j/read-value j/keyword-keys-object-mapper)
+   :result))
+
+(defn get-polling-future
+  [{:keys [verbose?] :as ctx}]
+  (future
+    (when verbose?
+      (let [update-id (atom 0)]
+        (loop []
+          (doseq [update (get-updates ctx @update-id)]
+            (clojure.pprint/pprint update)
+            (process-update-new ctx update)
+            (reset! update-id (inc (:update_id update))))
+          (Thread/sleep 1000)
+          (recur))))))

@@ -109,6 +109,12 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
+(defmethod ig/init-key :tg/polling-future [_ {:keys [handler] :as ctx}]
+  (cards/get-polling-future ctx))
+
+(defmethod ig/halt-key! :tg/polling-future [_ f]
+  (future-cancel f))
+
 (defmethod ig/init-key :db/value [_ val] (atom {}))
 
 (defmethod ig/init-key :cards/resources [_ val]
@@ -130,8 +136,8 @@
 
 (defmethod ig/init-key :chat/config [_ val] val)
 
-(defmethod ig/init-key :chat/registry [_ {:chat/keys [config] :as ctx}]
-  (cards/get-registry config))
+(defmethod ig/init-key :chat/registry [_ ctx]
+  (cards/get-registry (:chat/config ctx) (:payment/config ctx)))
 
 (defmethod ig/init-key :chat/logic [_ {:chat/keys [config registry] :as ctx}]
   (cards/prepare-chat-logic config registry))
