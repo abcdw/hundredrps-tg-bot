@@ -119,6 +119,7 @@
 
 (defmethod ig/init-key :cards/resources [_ val]
   (-> (update-in val [:fonts] load-files-from-dir)
+      (update-in [:photos] load-files-from-dir)
       (update-in [:pdfs] #(update-vals % load-files-from-dir))))
 
 (defmethod ig/init-key :pdf/templates [_ val] val)

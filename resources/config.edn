@@ -81,6 +81,7 @@
 
  :cards/resources
  {:fonts   "cards/fonts"
+  :photos  "cards/photos"
   :pdfs    {:letter-for-mother "cards/letter-for-mother/pdfs"
             :best-woman        "cards/best-woman/pdfs"
             :valentine         "cards/valentine/pdfs"}
