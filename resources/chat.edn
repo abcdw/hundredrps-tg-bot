@@ -39,7 +39,7 @@
     :reply_markup
     {:inline_keyboard
      [[{:text "Как выглядит «Лучшая женщина»"
-        :url  "https://disk.yandex.ru/i/_96I19wyaGsPUQ"}]
+        :url  "https://disk.yandex.ru/i/QWowqmA0ZpjxrQ"}]
       [{:text "Как выглядит «Письмо маме»"
         :url  "https://disk.yandex.ru/i/A2lwriRYnsfv3w"}]
       [{:text "Как выглядит «Письмо о любви»"
