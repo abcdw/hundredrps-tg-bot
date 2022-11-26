@@ -269,12 +269,13 @@
 
 (defmethod perform-action :save-start-message
   [ctx _]
-  (let [maybe-text  (get-in ctx [:update :message :text])
-        start-regex #"/start.*"
-        start-text  (if (and maybe-text (re-find start-regex maybe-text))
-                      (get-start-parameter maybe-text)
-                      "")]
-    (assoc-in ctx [:state :start] start-text)))
+  (let [maybe-text    (get-in ctx [:update :message :text])
+        start-regex   #"/start.*"
+        original-text (get-in ctx [:state :start])
+        start-text    (if (and maybe-text (re-find start-regex maybe-text))
+                        (get-start-parameter maybe-text)
+                        "")]
+    (assoc-in ctx [:state :start] (or original-text start-text))))
 
 (defmethod perform-action :send-analytics-async!
   [{:analytics/keys   [enabled?]
