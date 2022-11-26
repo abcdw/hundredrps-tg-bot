@@ -10,6 +10,7 @@
      :values-path [:payment/config] :values-keys [:cost]}
     {:action :extract-text}
     {:action :save-text}
+    {:action :save-start-message}
     {:action :send-messages!}
     {:action :to-step :step [:start]}]
    [:map [:update :menu/start]]]

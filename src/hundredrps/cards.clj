@@ -267,20 +267,24 @@
   [text]
   (clojure.string/replace text #"/start\s*" ""))
 
+(defmethod perform-action :save-start-message
+  [ctx _]
+  (let [maybe-text  (get-in ctx [:update :message :text])
+        start-regex #"/start.*"
+        start-text  (if (and maybe-text (re-find start-regex maybe-text))
+                      (get-start-parameter maybe-text)
+                      "")]
+    (assoc-in ctx [:state :start] start-text)))
+
 (defmethod perform-action :send-analytics-async!
   [{:analytics/keys   [enabled?]
     {:keys [chat-id]} :data
     {:keys [step]}    :state
     :as               ctx} _]
   (when enabled?
-    (let [maybe-text  (get-in ctx [:update :message :text])
-          start-regex #"/start.*"
-          props       (if (and maybe-text (re-find start-regex maybe-text))
-                        {:start (get-start-parameter maybe-text)}
-                        {})]
-      (analytics/send-analytics ctx chat-id (if step
-                                              (str step)
-                                              "before-universe") props)))
+    (let [props       {:start (get-in ctx [:state :start])}
+          event-type  (if step (str step) "before-universe")]
+      (analytics/send-analytics ctx chat-id event-type props)))
   ctx)
 
 (defmethod perform-action :format-string
