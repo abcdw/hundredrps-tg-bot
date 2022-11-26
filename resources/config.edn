@@ -1,5 +1,6 @@
-{:http/server     {:port    #long #or [#env PORT 8080]
-                   :handler #ig/ref :handler/webhook}
+{:http/server {:port    #long #or [#env PORT 8080]
+               :ip      "127.0.0.1"
+               :handler #ig/ref :handler/webhook}
 
  :handler/webhook {:stats/config 100 ;; number of request before printing statistics
                    :chat/context #ig/ref :chat/context}
