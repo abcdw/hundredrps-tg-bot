@@ -1,45 +1,29 @@
 {:http/server     {:port    #long #or [#env PORT 8080]
                    :handler #ig/ref :handler/webhook}
 
- :handler/webhook {:tg/api-url  #ig/ref :tg/api-url
-                   :tg/file-url #ig/ref :tg/file-url
+ :handler/webhook {:stats/config 100 ;; number of request before printing statistics
+                   :chat/context #ig/ref :chat/context}
 
-                   :stats/config 100 ;; number of request before printing statistics
+ :tg/polling-future {:verbose?     #profile {:dev     true
+                                             :default false}
+                     :chat/context #ig/ref :chat/context}
 
-                   :cards/resources #ig/ref :cards/resources
+ :chat/context {:tg/api-url  #ig/ref :tg/api-url
+                :tg/file-url #ig/ref :tg/file-url
 
-                   :pdf/generator #ig/ref :pdf/generator
+                :cards/resources #ig/ref :cards/resources
 
-                   :payment/config #ig/ref :payment/config
+                :pdf/generator #ig/ref :pdf/generator
 
-                   :amplitude/api-url   #ig/ref :amplitude/api-url
-                   :amplitude/api-token #ig/ref :amplitude/api-token
-                   :analytics/enabled?  #ig/ref :analytics/enabled?
+                :payment/config #ig/ref :payment/config
 
-                   :chat/logic    #ig/ref :chat/logic
-                   :chat/registry #ig/ref :chat/registry
-                   :db/value      #ig/ref :db/value}
+                :amplitude/api-url   #ig/ref :amplitude/api-url
+                :amplitude/api-token #ig/ref :amplitude/api-token
+                :analytics/enabled?  #ig/ref :analytics/enabled?
 
- :tg/polling-future {:verbose?    #profile {:dev     true
-                                            :default false}
-                     :tg/api-url  #ig/ref :tg/api-url
-                     :tg/file-url #ig/ref :tg/file-url
-
-                     :stats/config 10 ;; number of request before printing statistics
-
-                     :cards/resources #ig/ref :cards/resources
-
-                     :pdf/generator #ig/ref :pdf/generator
-
-                     :payment/config #ig/ref :payment/config
-
-                     :amplitude/api-url   #ig/ref :amplitude/api-url
-                     :amplitude/api-token #ig/ref :amplitude/api-token
-                     :analytics/enabled?  #ig/ref :analytics/enabled?
-
-                     :chat/logic    #ig/ref :chat/logic
-                     :chat/registry #ig/ref :chat/registry
-                     :db/value      #ig/ref :db/value }
+                :chat/logic    #ig/ref :chat/logic
+                :chat/registry #ig/ref :chat/registry
+                :db/value      #ig/ref :db/value}
 
  :pdf/generator {:pdf/templates   #ig/ref :pdf/templates
                  :pdf/cards       #ig/ref :pdf/cards

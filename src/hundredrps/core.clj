@@ -109,8 +109,11 @@
 (defmethod ig/halt-key! :http/server [_ server]
   (http-kit/server-stop! server))
 
-(defmethod ig/init-key :tg/polling-future [_ {:keys [handler] :as ctx}]
-  (cards/get-polling-future ctx))
+(defmethod ig/init-key :tg/polling-future [_ {:chat/keys [context] :as ctx}]
+  (-> ctx
+      (dissoc :chat/context)
+      (merge context)
+      cards/get-polling-future))
 
 (defmethod ig/halt-key! :tg/polling-future [_ f]
   (future-cancel f))
@@ -132,10 +135,15 @@
 (defmethod ig/init-key :amplitude/api-url [_ val] val)
 (defmethod ig/init-key :analytics/enabled? [_ val] val)
 
-(defmethod ig/init-key :handler/webhook [_ ctx]
-  (cards/get-handler-new ctx))
+(defmethod ig/init-key :handler/webhook [_ {:chat/keys [context] :as ctx}]
+  (-> ctx
+      (dissoc :chat/context)
+      (merge context)
+      cards/get-handler-new))
 
 (defmethod ig/init-key :chat/config [_ val] val)
+
+(defmethod ig/init-key :chat/context [_ val] val)
 
 (defmethod ig/init-key :chat/registry [_ ctx]
   (cards/get-registry (:chat/config ctx) (:payment/config ctx)))
