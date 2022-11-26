@@ -408,16 +408,19 @@
   (clojure.string/replace text #"/start\s*" ""))
 
 (defmethod perform-action :send-analytics-async!
-  [{:analytics/keys [enabled?]
-    {:keys [chat-id step]} :data
-    :as ctx} _]
+  [{:analytics/keys   [enabled?]
+    {:keys [chat-id]} :data
+    {:keys [step]}    :state
+    :as               ctx} _]
   (when enabled?
-    (let [maybe-text (get-in ctx [:update :message :text])
+    (let [maybe-text  (get-in ctx [:update :message :text])
           start-regex #"/start.*"
-          props (if (and maybe-text (re-find start-regex maybe-text))
-                  {:start (get-start-parameter maybe-text)}
-                  {})]
-      (analytics/send-analytics ctx chat-id step props)))
+          props       (if (and maybe-text (re-find start-regex maybe-text))
+                        {:start (get-start-parameter maybe-text)}
+                        {})]
+      (analytics/send-analytics ctx chat-id (if step
+                                              (str step)
+                                              "before-universe") props)))
   ctx)
 
 (defmethod perform-action :format-string
@@ -506,7 +509,8 @@
 
 (def keys-to-forward-to-chat-context
   [:tg/api-url :tg/file-url :chat/registry :payment/config :analytics/enabled?
-   :pdf/generator :silent? :verbose? :cards/resources])
+   :pdf/generator :silent? :verbose? :cards/resources
+   :amplitude/api-url :amplitude/api-token])
 
 (defn prepare-chat-context
   [ctx update chat-state]
