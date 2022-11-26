@@ -1,9 +1,10 @@
 {:http/server     {:port    #long #or [#env PORT 8080]
                    :handler #ig/ref :handler/webhook}
+
  :handler/webhook {:tg/api-url  #ig/ref :tg/api-url
                    :tg/file-url #ig/ref :tg/file-url
 
-                   :stats/config 10 ;; number of request before printing statistics
+                   :stats/config 100 ;; number of request before printing statistics
 
                    :pdf/templates   #ig/ref :pdf/templates
                    :pdf/cards       #ig/ref :pdf/cards
@@ -22,7 +23,8 @@
                    :chat/registry #ig/ref :chat/registry
                    :db/value      #ig/ref :db/value}
 
- :tg/polling-future {:verbose?    true
+ :tg/polling-future {:verbose?    #profile {:dev     true
+                                            :default false}
                      :tg/api-url  #ig/ref :tg/api-url
                      :tg/file-url #ig/ref :tg/file-url
 
