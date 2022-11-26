@@ -6,12 +6,9 @@
 
                    :stats/config 100 ;; number of request before printing statistics
 
-                   :pdf/templates   #ig/ref :pdf/templates
-                   :pdf/cards       #ig/ref :pdf/cards
-                   :text/templates  #ig/ref :text/templates
                    :cards/resources #ig/ref :cards/resources
-                   ;; TODO: Remove unecessary deps from webhook
-                   :pdf/generator   #ig/ref :pdf/generator
+
+                   :pdf/generator #ig/ref :pdf/generator
 
                    :payment/config #ig/ref :payment/config
 
@@ -30,12 +27,9 @@
 
                      :stats/config 10 ;; number of request before printing statistics
 
-                     :pdf/templates   #ig/ref :pdf/templates
-                     :pdf/cards       #ig/ref :pdf/cards
-                     :text/templates  #ig/ref :text/templates
                      :cards/resources #ig/ref :cards/resources
-                     ;; TODO: Remove unecessary deps from webhook
-                     :pdf/generator   #ig/ref :pdf/generator
+
+                     :pdf/generator #ig/ref :pdf/generator
 
                      :payment/config #ig/ref :payment/config
 
