@@ -131,6 +131,15 @@
             (m/form))))
     (mr/fast-registry reg)))
 
+(defn add-dot-if-needed [text]
+  (let [text (clojure.string/trim text)]
+    (cond (clojure.string/ends-with? text ",") (str text ".")
+          (clojure.string/ends-with? text "...") text
+          (clojure.string/ends-with? text ".") text
+          (clojure.string/ends-with? text "!") text
+          (clojure.string/ends-with? text "?") text
+          :else (str text "."))))
+
 (defmulti perform-action
   (fn [_ a] (:action a)))
 
@@ -340,6 +349,10 @@
   (->> (clojure.string/lower-case (get-in ctx path))
        (assoc-in ctx path)))
 
+(defmethod perform-action :add-dot-if-needed
+  [ctx {:keys [path]}]
+  (->> (add-dot-if-needed (get-in ctx path))
+       (assoc-in ctx path)))
 
 (defmethod perform-action :assoc-in
   [ctx {:keys [path value]}]
