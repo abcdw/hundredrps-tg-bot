@@ -169,4 +169,5 @@
   "Entry point."
   [& args]
   (ig/init (get-config :default))
-  (println "hundredrps is on duty."))
+  (let [version (-> HELPER .getPackage .getImplementationVersion)]
+    (println "hundredrps" version "is on duty.")))

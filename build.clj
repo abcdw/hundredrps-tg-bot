@@ -33,6 +33,7 @@
                 :src-dirs  ["src"]})
 
   (b/uber {:class-dir jar-content
+           :manifest  {"Implementation-Version" version}
            :uber-file uber-file-name
            :basis     basis
            :main      'hundredrps.core})                ; here we specify the entry point for uberjar
