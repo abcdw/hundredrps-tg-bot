@@ -68,17 +68,6 @@
                     :content      file}]}
    callback))
 
-(defn deconstruct-update
-  "Extract message, message-type and possible photo and text from
-  update."
-  [upd]
-  (let [message      (tg/get-payload upd)
-        message-type (tg/get-message-type upd)]
-    {:message-type message-type
-     :message      message
-     :text         (:text message)
-     :photo        (tg/get-photo-file-id message)}))
-
 ;; https://github.com/metosin/malli#built-in-schemas
 
 (defn get-file [{:tg/keys [api-url file-url]} file-id]
@@ -94,17 +83,6 @@
    deref
    :body
    utils/load-file-as-byte-array))
-
-(defn values->pdf-data
-  "Generates data for pdf from values extracted from tg updates."
-  [ctx values]
-  (reduce (fn [acc [msg-id {:keys [step value]}]]
-            (assoc-in acc step (if (tg/file? value)
-                                 (get-file ctx (:file_id value))
-                                 value)))
-          ;; Sort is needed to make sure that messages with lower id
-          ;; processed earlier
-          {} (sort values)))
 
 (defn values->raw-data
   [values]
@@ -126,124 +104,6 @@
 
 
 ;;; Chat
-
-(defn update-state-value
-  [old-value parsed-upd & [step]]
-  (let [[path payload] (tg/get-payload parsed-upd)]
-    (merge {:step step} old-value
-           (when (and path payload)
-             {:value (get-in payload path)}))))
-
-(defn try-to-make-step
-  [state logic upd]
-  (let [msg            (tg/get-payload upd)
-        msg-id         (tg/get-message-id upd)
-        edited-message (:edited_message upd)
-        chat-id        (tg/get-chat-id upd)
-
-        step (if edited-message
-               (get-in state [:values msg-id :step])
-               (:step state))
-
-        global-menu (get-in logic [:global-menu :transitions])
-        transitions (get-in logic [:steps step :transitions])
-
-        [{:keys [data-mapper] :as result} parsed-upd]
-        (or
-         (global-menu upd)
-         (transitions upd))
-
-        values-extracted? (vector? (tg/get-payload parsed-upd))
-
-        mapper-ctx  {:state state
-                     :upd   upd
-                     :parsed-upd parsed-upd}
-        msg-updater #(if data-mapper
-                       (reduce
-                        (fn [acc [from to]]
-                          (->> (get-in mapper-ctx from)
-                               (assoc-in acc to)))
-                               % data-mapper)
-                       %)]
-
-    (if values-extracted?
-      (cond-> state
-        edited-message
-        (assoc :replies
-               [(if result
-                  (tg/send-text-message
-                   (tg/get-chat-id upd)
-                   "Мы поредактировали чё вы хотели.")
-                  (tg/send-text-message
-                   (tg/get-chat-id upd)
-                   "Сорян, попробуй ещё раз."))])
-
-        (not edited-message)
-        (assoc :replies
-               (if (:messages result)
-                 (msg-updater (:messages result))
-                 [(tg/send-text-message
-                   (tg/get-chat-id upd)
-                   (with-out-str (println result)))]))
-
-        (and result (contains? result :to) (not edited-message))
-        (assoc :step (:to result))
-
-        (and result (tg/get-message-id upd))
-        (update-in [:values (tg/get-message-id upd)]
-                   update-state-value parsed-upd step))
-
-      (do
-        (println "Values not extracted")
-        (assoc state :replies (get-in logic [:messages :wrong-input]))))))
-
-(defn process-update
-  [state logic upd]
-  (let [new-state (-> state
-                      (update :updates #(if % (conj % upd) [upd]))
-                      (try-to-make-step logic upd))
-
-        replies (:replies new-state)]
-    {:replies replies
-     :state (dissoc new-state :replies)}))
-
-(defn get-handler
-  "Returns a function, which process http requests.
-  `silent?` control if handler send messages at all it useful to setup
-  the needed state before testing. `verbose?` forces handler to reply
-  always with api call rather than return value to webhook."
-  [{:keys    [silent? verbose?]
-    :tg/keys [api-url file-url]
-    :as      ctx}]
-  (let [stats (atom {:request-count 0})]
-    (fn [{:keys [body] :as request}]
-      (let [input (j/read-value body j/keyword-keys-object-mapper)
-
-            chat-id (tg/get-chat-id input)
-
-            db    (:db/value ctx)
-            logic (get-in @db [:logic])
-
-            {:keys [state] :as result}
-            (process-update (get-in @db [chat-id :state] {}) logic input)
-
-            replies (map #(assoc % :chat_id chat-id) (:replies result))
-            _       (swap! db assoc-in [chat-id :state] state)]
-
-        ;; (println "update-id ================> " (:update_id input))
-        ;; (swap! stats update :request-count inc)
-        ;; (println (:request-count @stats))
-        ;; (clojure.pprint/pprint input)
-        ;; (clojure.pprint/pprint replies)
-
-
-        (if-not silent?
-          (if (and (= 1 (count replies)) (not verbose?))
-            (msg->http-response (first replies))
-            (do
-              (future
-                (doall (map #(deref (async-call api-url %)) replies)))
-              {:status 200})))))))
 
 (defn prepare-chat-logic
   [config registry]

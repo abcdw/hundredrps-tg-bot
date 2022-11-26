@@ -13,22 +13,22 @@
 (defn get-db []
   @(:db/value integrant.repl.state/system))
 
-(defn emulate-requests
-  [updates]
-  (let [conf (select-keys integrant.repl.state/system
-                          (keys (:handler/webhook integrant.repl.state/config)))
+;; (defn emulate-requests
+;;   [updates]
+;;   (let [conf (select-keys integrant.repl.state/system
+;;                           (keys (:handler/webhook integrant.repl.state/config)))
 
-        verbose-handler (cards/get-handler (assoc conf :verbose? true))
-        silent-handler  (cards/get-handler (assoc conf :silent? true))
-        to-request      #(identity {:body (j/write-value-as-string %)})]
-    (doall (map #(silent-handler (to-request %)) (butlast updates)))
-    (verbose-handler (to-request (last updates)))))
+;;         verbose-handler (cards/get-handler (assoc conf :verbose? true))
+;;         silent-handler  (cards/get-handler (assoc conf :silent? true))
+;;         to-request      #(identity {:body (j/write-value-as-string %)})]
+;;     (doall (map #(silent-handler (to-request %)) (butlast updates)))
+;;     (verbose-handler (to-request (last updates)))))
 
-(defn pass-letter-for-mother
-  []
-  (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
-      io/resource io/file slurp read-string
-      emulate-requests))
+;; (defn pass-letter-for-mother
+;;   []
+;;   (-> "assets/01-letter-for-mother-with-photos-and-errors.edn"
+;;       io/resource io/file slurp read-string
+;;       emulate-requests))
 
 (def updates
   (-> ;; "assets/00-letter-for-mother.edn"

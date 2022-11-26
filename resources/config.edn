@@ -68,7 +68,7 @@
  :analytics/enabled?  #profile {:dev     false
                                 :default true}
 
- :db/value {:logic #include "logic.edn"}
+ :db/value {}
 
  :chat/config
  {:general #include "chat.edn"
