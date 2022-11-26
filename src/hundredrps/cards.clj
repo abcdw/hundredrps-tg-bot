@@ -335,6 +335,12 @@
   (->> (clojure.string/replace (get-in ctx path) (re-pattern match) replacement)
        (assoc-in ctx path)))
 
+(defmethod perform-action :lower-case
+  [ctx {:keys [path]}]
+  (->> (clojure.string/lower-case (get-in ctx path))
+       (assoc-in ctx path)))
+
+
 (defmethod perform-action :assoc-in
   [ctx {:keys [path value]}]
   (assoc-in ctx path value))
