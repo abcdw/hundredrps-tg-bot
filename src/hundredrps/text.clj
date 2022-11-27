@@ -70,6 +70,7 @@
                 "\u2640-\u2642"
                 "]+"))
         replacements [[#"\u2014" "-"] ; —
+                      [#"\u2026" "..."] ; …
                       [regex ""]]]
 
     (reduce (fn [acc [pattern replacement]]
