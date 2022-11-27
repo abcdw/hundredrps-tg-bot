@@ -133,11 +133,14 @@
 
 (defn add-dot-if-needed [text]
   (let [text (clojure.string/trim text)]
-    (cond (clojure.string/ends-with? text ",") (str text ".")
+    (cond (clojure.string/ends-with? text ",")
+          (clojure.string/replace text #",+$" ".")
           (clojure.string/ends-with? text "...") text
           (clojure.string/ends-with? text ".") text
           (clojure.string/ends-with? text "!") text
           (clojure.string/ends-with? text "?") text
+          (clojure.string/ends-with? text "?!") text
+          (clojure.string/ends-with? text "!?") text
           :else (str text "."))))
 
 (defmulti perform-action
