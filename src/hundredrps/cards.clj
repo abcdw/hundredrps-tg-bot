@@ -300,6 +300,11 @@
       (analytics/send-analytics ctx chat-id event-type props)))
   ctx)
 
+(defmethod perform-action :log-event
+  [{{:keys [step start]} :state :as ctx} _]
+  (println step start)
+  ctx)
+
 (defmethod perform-action :format-string
   [ctx {:keys [path values-path values-keys]}]
   (let [format-string (get-in ctx path)
