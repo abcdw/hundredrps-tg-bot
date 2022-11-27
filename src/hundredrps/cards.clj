@@ -393,7 +393,7 @@
     (if (= ::m/invalid res)
       (do
         (println "request is not parsed")
-        (clojure.pprint/pprint ctx)
+        (clojure.pprint/pprint (:update ctx))
         ctx)
       (let [[_ [actions parsed-ctx]] res
             def-actions (if verbose? default-actions-verbose default-actions)]
@@ -453,7 +453,12 @@
             response
             (if (m/validate :telegram/update update
                             {:registry tg/fast-registry})
-              (process-update-new ctx update)
+              (try
+                (process-update-new ctx update)
+                (catch Exception e
+                  (do (println "caught exception: " (.getMessage e))
+                      (clojure.pprint/pprint update)
+                      {:status 200})))
               {:status 400})]
 
         (swap! stats update-in [:request-count] inc)
