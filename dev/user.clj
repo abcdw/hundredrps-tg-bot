@@ -1,10 +1,9 @@
 (ns user
-  (:require
+  (:require [hundredrps.core :refer [get-config]]
    [clojure.java.io :as io]
    [hundredrps.cards :as cards]
-   [hundredrps.core :refer [get-config]]
-   [integrant.repl]
    [jsonista.core :as j]
+   [integrant.repl]
    [org.httpkit.client :as http]
    [clojure.pprint]))
 
@@ -43,6 +42,33 @@
   ;; "http://hundredrps.project.trop.in:50080"
   "http://localhost:8080"
   )
+
+(defn set-webhook
+  [{:tg/keys [api-url]}]
+  (http/request
+   {:url          (str api-url "/setWebhook")
+    :query-params {:url "https://hundredrps.project.trop.in/cardsandcare/webhook"
+                   :max_connections 100}
+    :multipart    [{:name     "certificate"
+                    :content  (io/file "keys/hundredrps.pem")
+                    :filename "cert.pem"}]}))
+
+(defn delete-webhook
+  [{:tg/keys [api-url]}]
+  (http/request {:method :post :url (str api-url "/deleteWebhook")}))
+
+(defn get-webhook-info
+  [{:tg/keys [api-url]}]
+  (http/request {:method :post :url (str api-url "/getWebhookInfo")}))
+
+(def tg (integrant.core/init (get-config) [:tg/api-url]))
+(comment
+  (def
+    resp
+    @(get-webhook-info tg)
+    ;; (delete-webhook )
+    @(set-webhook tg)
+    ))
 
 (defn make-async-request
   [upd & [callback]]
